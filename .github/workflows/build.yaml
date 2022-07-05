@@ -55,23 +55,12 @@ jobs:
 
       - run: sudo apt install libmp3lame-dev
 
-      - uses: actions/cache@v3
+      - uses: dAppServer/wails-build-action@v2
         with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: ">=1.18.0"
-
-      - name: Build
-        run: |
-          wails build
+          go-version: 1.18
+          build-name: lunii-admin
+          build-platform: linux/amd64
+          package: false
 
       - uses: ncipollo/release-action@v1
         with:
@@ -91,30 +80,16 @@ jobs:
           fetch-depth: 0
 
       - run: brew install lame
-
       # There must be a flag to load only the static lib
       - name: Delete dynamic version of Lame
         run: rm /usr/local/opt/lame/lib/libmp3lame.0.dylib
 
-      - uses: actions/cache@v3
+      - uses: dAppServer/wails-build-action@v2
         with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: ">=1.18.0"
-
-      - name: Build
-        run: |
-          wails build
-
-      - run: otool -L ./dist/lunii-cli-macos-amd64
+          go-version: 1.18
+          build-name: lunii-admin
+          build-platform: darwin/amd64
+          package: false
 
       - uses: ncipollo/release-action@v1
         with:
