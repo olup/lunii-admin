@@ -55,29 +55,18 @@ jobs:
 
       - run: sudo apt install libmp3lame-dev
 
-      - uses: actions/cache@v3
+      - uses: dAppServer/wails-build-action@main
         with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: ">=1.18.0"
-
-      - name: Build
-        run: |
-          wails build
+          go-version: 1.18
+          build-name: lunii-admin-linux
+          build-platform: linux/amd64
+          package: false
 
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "dist/lunii-cli-linux"
+          artifacts: "build/bin/lunii-admin-linux"
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
           tag: next
@@ -90,37 +79,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: brew install lame
-
-      # There must be a flag to load only the static lib
+      # LAme is installed, but we want to remove the dynamic lib
       - name: Delete dynamic version of Lame
         run: rm /usr/local/opt/lame/lib/libmp3lame.0.dylib
 
-      - uses: actions/cache@v3
+      - uses: dAppServer/wails-build-action@main
         with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: ">=1.18.0"
-
-      - name: Build
-        run: |
-          wails build
-
-      - run: otool -L ./dist/lunii-cli-macos-amd64
+          go-version: 1.18
+          build-name: lunii-admin-macos
+          build-platform: darwin/amd64
+          package: false
 
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "dist/lunii-cli-macos-amd64"
+          artifacts: "build/bin/lunii-cli-macos-amd64"
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
           tag: next
