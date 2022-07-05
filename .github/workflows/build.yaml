@@ -55,7 +55,7 @@ jobs:
 
       - run: sudo apt install libmp3lame-dev
 
-      - uses: dAppServer/wails-build-action@main
+      - uses: dAppServer/wails-build-action@v2
         with:
           go-version: 1.18
           build-name: lunii-admin-linux
@@ -83,7 +83,7 @@ jobs:
       - name: Delete dynamic version of Lame
         run: rm /usr/local/opt/lame/lib/libmp3lame.0.dylib
 
-      - uses: dAppServer/wails-build-action@main
+      - uses: dAppServer/wails-build-action@v2
         with:
           go-version: 1.18
           build-name: lunii-admin-macos
@@ -94,7 +94,7 @@ jobs:
         with:
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "build/bin/lunii-cli-macos-amd64"
+          artifacts: "build/bin/lunii-admin-macos.app"
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
           tag: next

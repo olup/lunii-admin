@@ -3,7 +3,7 @@ module lunii-tools
 go 1.17
 
 require (
-	github.com/olup/lunii-cli v0.0.0-20220704120645-c4e5fe2a4073
+	github.com/olup/lunii-cli v0.0.0-20220705195023-565f29b5bec5
 	github.com/wailsapp/wails/v2 v2.0.0-beta.38
 )
 
