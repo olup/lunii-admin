@@ -6,44 +6,50 @@ on:
       - main
 
 jobs:
-  # build-windows:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - run: Get-Location
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: ls D:/a/lunii-admin/lunii-admin/bindings/windows/lib
 
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
 
-  #     - uses: actions/cache@v3
-  #       with:
-  #         path: |
-  #           ~\AppData\Local\go-build
-  #           ~\go\pkg\mod
-  #         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-go-
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ">=1.18.0"
 
-  #     - name: Set up Go
-  #       uses: actions/setup-go@v3
-  #       with:
-  #         go-version: ">=1.18.0"
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~\AppData\Local\go-build
+            ~\go\pkg\mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
-  #     - name: Build
-  #       run: |
-  #         Set-Item -Path Env:CGO_LDFLAGS -Value "-LD:/a/lunii-cli/lunii-cli/bindings/windows/lib"
-  #         Set-Item -Path Env:CGO_CFLAGS -Value "-ID:/a/lunii-cli/lunii-cli/bindings/windows/include"
-  #         go build -o ./dist/lunii-cli-windows.exe -ldflags "-v '-extldflags=-static -lm'" ./cmd/lunii-cli
+      - name: Set up Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
-  #     - uses: ncipollo/release-action@v1
-  #       with:
-  #         allowUpdates: true
-  #         replacesArtifacts: true
-  #         artifacts: "dist/lunii-cli-windows.exe"
-  #         token: ${{ secrets.GITHUB_TOKEN }}
-  #         prerelease: true
-  #         tag: next
+      - name: Build
+        run: |
+          Set-Item -Path Env:CGO_LDFLAGS -Value "-LD:/a/lunii-admin/lunii-admin/bindings/windows/lib"
+          Set-Item -Path Env:CGO_CFLAGS -Value "-ID:/a/lunii-admin/lunii-admin/bindings/windows/include"
+          wails build -o lunii-admin-windows.exe -ldflags "-v '-extldflags=-static -lm'"
+
+      - uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          replacesArtifacts: true
+          artifacts: "build/bin/lunii-admin-windows.exe"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          tag: next
 
   build-linux:
     runs-on: ubuntu-latest
@@ -53,14 +59,34 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Linux Wails deps
+        run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
+
       - run: sudo apt install libmp3lame-dev
 
-      - uses: dAppServer/wails-build-action@v2
+      - uses: actions/setup-node@v3
         with:
-          go-version: 1.18
-          build-name: lunii-admin-linux
-          build-platform: linux/amd64
-          package: false
+          node-version: 16
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ">=1.18.0"
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~\AppData\Local\go-build
+            ~\go\pkg\mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Set up Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Build
+        run: wails build -o lunii-admin-linux
 
       - uses: ncipollo/release-action@v1
         with:
@@ -83,18 +109,35 @@ jobs:
       - name: Delete dynamic version of Lame
         run: rm /usr/local/opt/lame/lib/libmp3lame.0.dylib
 
-      - uses: dAppServer/wails-build-action@v2
+      - uses: actions/setup-node@v3
         with:
-          go-version: 1.18
-          build-name: lunii-admin-macos
-          build-platform: darwin/amd64
-          package: false
+          node-version: 16
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ">=1.18.0"
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~\AppData\Local\go-build
+            ~\go\pkg\mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Set up Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Build
+        run: wails build -o lunii-admin-macos
 
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "build/bin/lunii-admin-macos.app"
+          artifacts: "build/bin/lunii-admin.app"
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
           tag: next

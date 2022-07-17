@@ -3,6 +3,8 @@
 import {lunii} from '../models';
 import {uuid} from '../models';
 
+export function GetDeviceInfos():Promise<lunii.Device>;
+
 export function InstallPack():Promise<string|Error>;
 
 export function ListPacks():Promise<Array<lunii.Metadata>>;
@@ -12,5 +14,3 @@ export function RemovePack(arg1:string):Promise<boolean|Error>;
 export function ChangePackOrder(arg1:uuid.UUID,arg2:number):Promise<string|Error>;
 
 export function CreatePack():Promise<string|Error>;
-
-export function GetDeviceInfos():Promise<lunii.Device>;
