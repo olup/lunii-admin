@@ -3,7 +3,8 @@ module lunii-tools
 go 1.17
 
 require (
-	github.com/olup/lunii-cli v0.0.0-20220705195023-565f29b5bec5
+	github.com/google/uuid v1.3.0
+	github.com/olup/lunii-cli v0.0.0-20220717113207-75ae2ff37a43
 	github.com/wailsapp/wails/v2 v2.0.0-beta.38
 )
 
@@ -15,7 +16,6 @@ require (
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect

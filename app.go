@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/google/uuid"
 	"github.com/olup/lunii-cli/pkg/lunii"
 	studiopackbuilder "github.com/olup/lunii-cli/pkg/pack-builder"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -100,6 +101,21 @@ func (a *App) InstallPack() (string, error) {
 	}
 
 	err = device.AddStudioPack(studioPack)
+	if err != nil {
+		return "", err
+	}
+
+	return "", nil
+}
+
+func (a *App) ChangePackOrder(uuid uuid.UUID, index int) (string, error) {
+
+	device, err := lunii.GetDevice()
+	if err != nil {
+		return "", err
+	}
+
+	err = device.ChangePackOrder(uuid, index)
 	if err != nil {
 		return "", err
 	}

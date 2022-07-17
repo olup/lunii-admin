@@ -22,6 +22,8 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import {
+  MdArrowDownward,
+  MdArrowUpward,
   MdCreate,
   MdDelete,
   MdDevices,
@@ -33,8 +35,10 @@ import {
   ListPacks,
   InstallPack,
   RemovePack,
+  ChangePackOrder,
 } from "../wailsjs/go/main/App";
 import { lunii } from "../wailsjs/go/models";
+import { DeleteModal } from "./components/DeleteModal";
 import { NewStoryModal } from "./components/NewStoryModal";
 
 function App() {
@@ -63,6 +67,16 @@ function App() {
 
   const handleInstallStory = async () => {
     await InstallPack();
+    await loadPacks();
+  };
+
+  const handleRemovePack = async (packRef: string) => {
+    await RemovePack(packRef);
+    await loadPacks();
+  };
+
+  const handleChangePackOrder = async (uuid: number[], position: number) => {
+    await ChangePackOrder(uuid, position);
     await loadPacks();
   };
 
@@ -123,40 +137,44 @@ function App() {
                 Install story
               </Button>
             </Tooltip>
-            <Tooltip label="Create a STUdio story pack from a directory">
-              <Button
-                variant="outline"
-                colorScheme="linkedin"
-                rightIcon={<MdCreate />}
-                ml={2}
-              >
-                Create story
-              </Button>
-            </Tooltip>
+            <NewStoryModal />
           </Box>
 
           <Box>
             <Table>
               <Thead>
                 <Tr>
+                  <Th></Th>
+
                   <Th fontWeight="bold">Title</Th>
                   <Th>Ref</Th>
                   <Th>Uuid</Th>
                   <Th></Th>
                 </Tr>
               </Thead>
-              {packs.map((p) => (
+              {packs?.map((p, i) => (
                 <Tbody>
+                  <Td>
+                    <IconButton
+                      size="xs"
+                      aria-label="up"
+                      icon={<MdArrowUpward />}
+                      mr={1}
+                      onClick={() => handleChangePackOrder(p.uuid, i - 1)}
+                    />
+                    <IconButton
+                      size="xs"
+                      aria-label="down"
+                      icon={<MdArrowDownward />}
+                      onClick={() => handleChangePackOrder(p.uuid, i + 1)}
+                    />
+                  </Td>
+
                   <Td fontWeight="bold">{p.title}</Td>
                   <Td>{p.ref}</Td>
                   <Td>{p.uuid}</Td>
                   <Td>
-                    <IconButton
-                      variant="ghost"
-                      aria-label="delete"
-                      icon={<MdDelete />}
-                      onClick={() => RemovePack(p.ref)}
-                    />
+                    <DeleteModal onDelete={() => handleRemovePack(p.ref)} />
                   </Td>
                 </Tbody>
               ))}
