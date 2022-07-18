@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/google/uuid v1.3.0
-	github.com/olup/lunii-cli v0.0.0-20220717201415-be00c391dd69
+	github.com/olup/lunii-cli v0.0.0-20220718044646-b82e8ee4b45c
 	github.com/wailsapp/wails/v2 v2.0.0-beta.38
 )
 

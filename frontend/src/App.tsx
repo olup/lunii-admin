@@ -70,8 +70,8 @@ function App() {
     await loadPacks();
   };
 
-  const handleRemovePack = async (packRef: string) => {
-    await RemovePack(packRef);
+  const handleRemovePack = async (uuid: number[]) => {
+    await RemovePack(uuid);
     await loadPacks();
   };
 
@@ -174,7 +174,7 @@ function App() {
                   <Td>{p.ref}</Td>
                   <Td>{p.uuid}</Td>
                   <Td>
-                    <DeleteModal onDelete={() => handleRemovePack(p.ref)} />
+                    <DeleteModal onDelete={() => handleRemovePack(p.uuid)} />
                   </Td>
                 </Tbody>
               ))}

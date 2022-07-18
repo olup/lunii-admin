@@ -44,18 +44,18 @@ func (a *App) ListPacks() []lunii.Metadata {
 	return metadatas
 }
 
-func (a *App) RemovePack(packRef string) (bool, error) {
+func (a *App) RemovePack(uuid uuid.UUID) (bool, error) {
 	device, err := lunii.GetDevice()
 	if err != nil {
 		return false, err
 	}
 
-	err = device.RemovePackFromIndexFromRef(packRef)
+	err = device.RemovePackFromIndex(uuid)
 	if err != nil {
 		return false, err
 	}
 
-	err = os.RemoveAll(filepath.Join(device.MountPoint, ".content", packRef))
+	err = os.RemoveAll(filepath.Join(device.MountPoint, ".content", lunii.GetRefFromUUid(uuid)))
 	if err != nil {
 		return false, err
 	}
