@@ -1,4 +1,7 @@
-# Lunii Admin
+
+<p align="center">
+  <img width="300" alt="image" src="https://user-images.githubusercontent.com/13785588/179449532-a4beb00f-0315-4386-9468-e494fc347224.png">
+</p>
 
 download latest version from https://github.com/olup/lunii-admin/releases/tag/next
 
