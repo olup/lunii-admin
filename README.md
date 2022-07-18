@@ -1,15 +1,56 @@
-# README
+# Lunii Admin
 
-## About
+download latest version from https://github.com/olup/lunii-admin/releases/tag/next
 
-This is the official Wails React-TS template.
+This is a small desktop app to manage your lunii device.
 
-## Live Development
+Features :
+- list installed story packs
+- reorder story packs
+- delete story pack
+- Install third party packs (STUdio zip pack, more info on https://github.com/marian-m12l/studio)
+- create your own thrid party story packs from a structured directory (details below)
 
-To run in live development mode, run `wails dev` in the project directory. In another terminal, go into the `frontend`
-directory and run `npm run dev`. The frontend dev server will run on http://localhost:34115. Connect to this in your
-browser and connect to your application.
+## Creating your own story packs
+https://github.com/marian-m12l/studio offers a full editor to create your story packs, by I find that overkill for most users.
 
-## Building
+This software lets you create a STUdio compatible story pack from a structured directory.
 
-To build a redistributable, production mode package, use `wails build`.
+The structure needs to be as follows:
+```
+pack-name/
+    title.mp3
+    cover.jpeg
+    md.yaml
+
+    first-story/
+        title.mp3
+        cover.jpeg
+        story.mp3
+    
+    second-story/
+        title.mp3
+        cover.jpeg
+        story.mp3
+    
+    sub-menu/
+        title.mp3
+        cover.jpeg
+
+        sub-story/
+            title.mp3
+            cover.jpeg
+            story.mp3
+```
+
+the `md.yaml` file should have the following content:
+
+```
+title: <Your pack title>
+description: <Your pack description>
+uuid: <A single uuid - generate it from https://www.uuidtools.com/v4>
+```
+
+The use the "create pack" button from the app to convert such a directory to a `.zip` STUdio story pack.
+
+You can then install the resulting pack to your device with the "install pack" button.

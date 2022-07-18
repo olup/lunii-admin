@@ -142,7 +142,7 @@ jobs:
         with:
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "lunii-admin-macos-amd64.dmg"
+          artifacts: "lunii-admin-macos.dmg"
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
           tag: next
