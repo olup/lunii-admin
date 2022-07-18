@@ -131,13 +131,18 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
-        run: wails build -o lunii-admin-macos
+        run: wails build
+
+      - name: Create DMG
+        run: |
+          brew install create-dmg
+          create-dmg lunii-admin-macos-amd64.dmg build/bin/lunii-admin.app
 
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "build/bin/lunii-admin.app"
+          artifacts: "lunii-admin-macos-amd64.dmg"
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
           tag: next
