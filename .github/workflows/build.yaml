@@ -136,7 +136,7 @@ jobs:
       - name: Create DMG
         run: |
           brew install create-dmg
-          create-dmg lunii-admin-macos-amd64.dmg build/bin/lunii-admin.app
+          create-dmg lunii-admin-macos.dmg build/bin/lunii-admin.app
 
       - uses: ncipollo/release-action@v1
         with:
