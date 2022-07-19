@@ -50,6 +50,7 @@ export const DeleteModal: FC<{ onDelete: () => void }> = ({ onDelete }) => {
                 colorScheme="red"
                 onClick={() => {
                   onDelete();
+
                   onClose();
                 }}
                 ml={3}

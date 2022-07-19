@@ -63,27 +63,28 @@ func (a *App) RemovePack(uuid uuid.UUID) (bool, error) {
 	return true, nil
 }
 
-func (a *App) CreatePack() (string, error) {
-	directoryPath, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
-		Title: "Choose directory",
-	})
-	if err != nil || directoryPath == "" {
-		return "", err
-	}
-
-	outputPath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
-		Title:           "Where to save the pack ?",
-		DefaultFilename: "pack.zip",
-	})
-	if err != nil || outputPath == "" {
-		return "", err
-	}
-
-	_, err = studiopackbuilder.CreateStudioPack(directoryPath, outputPath)
+func (a *App) CreatePack(directoryPath string, destinationPath string) (string, error) {
+	_, err := studiopackbuilder.CreateStudioPack(directoryPath, destinationPath)
 	if err != nil {
 		return "", err
 	}
 	return "", nil
+}
+
+func (a *App) OpenDirectory(title string) string {
+	path, _ := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "title",
+	})
+	return path
+}
+
+func (a *App) SaveFile(title string, defaultDirectory string, defaultFileName string) string {
+	path, _ := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Title:            "title",
+		DefaultDirectory: defaultDirectory,
+		DefaultFilename:  defaultFileName,
+	})
+	return path
 }
 
 func (a *App) InstallPack() (string, error) {

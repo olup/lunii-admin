@@ -19,6 +19,7 @@ import {
   Thead,
   Tooltip,
   Tr,
+  useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import {
@@ -39,12 +40,13 @@ import {
 } from "../wailsjs/go/main/App";
 import { lunii } from "../wailsjs/go/models";
 import { DeleteModal } from "./components/DeleteModal";
-import { NewStoryModal } from "./components/NewStoryModal";
+import { NewPackModal } from "./components/NewPackModal";
 
 function App() {
   const [device, setDevice] = useState<lunii.Device>();
   const [loading, setLoading] = useState(false);
   const [packs, setPacks] = useState<lunii.Metadata[]>([]);
+  const toast = useToast();
 
   const loadDevice = () => {
     setLoading(true);
@@ -67,11 +69,23 @@ function App() {
 
   const handleInstallStory = async () => {
     await InstallPack();
+    toast({
+      title: "The pack was installed on the device",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
     await loadPacks();
   };
 
   const handleRemovePack = async (uuid: number[]) => {
     await RemovePack(uuid);
+    toast({
+      title: "The pack was deleted from the device",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
     await loadPacks();
   };
 
@@ -85,15 +99,17 @@ function App() {
       {!device && (
         <>
           <Box display="flex">
-            <Button
-              colorScheme="orange"
-              rightIcon={<MdRefresh />}
-              onClick={loadDevice}
-              isLoading={loading}
-            >
-              Refresh
-            </Button>
-            <NewStoryModal />
+            <Tooltip label="Try refreshing after the device has been mounted by the system">
+              <Button
+                colorScheme="orange"
+                rightIcon={<MdRefresh />}
+                onClick={loadDevice}
+                isLoading={loading}
+              >
+                Refresh
+              </Button>
+            </Tooltip>
+            <NewPackModal />
           </Box>
           <Center opacity={0.3} fontSize={30} h={500} flexDirection="column">
             <Icon fontSize={100} as={MdDevices}></Icon>
@@ -137,7 +153,7 @@ function App() {
                 Install story
               </Button>
             </Tooltip>
-            <NewStoryModal />
+            <NewPackModal />
           </Box>
 
           <Box>
