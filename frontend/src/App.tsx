@@ -12,6 +12,7 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Table,
+  Tag,
   Tbody,
   Td,
   Text,
@@ -30,6 +31,7 @@ import {
   MdDevices,
   MdRefresh,
   MdUpload,
+  MdWarning,
 } from "react-icons/md";
 import {
   GetDeviceInfos,
@@ -40,19 +42,29 @@ import {
 } from "../wailsjs/go/main/App";
 import { lunii } from "../wailsjs/go/models";
 import { DeleteModal } from "./components/DeleteModal";
+import { DetailsModal } from "./components/DetailsModal";
+import { IsInstallingModal } from "./components/IsInstallingModal";
 import { NewPackModal } from "./components/NewPackModal";
+import { PackTag } from "./components/PackTag";
 
 function App() {
   const [device, setDevice] = useState<lunii.Device>();
-  const [loading, setLoading] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
   const [packs, setPacks] = useState<lunii.Metadata[]>([]);
   const toast = useToast();
 
-  const loadDevice = () => {
-    setLoading(true);
-    GetDeviceInfos()
-      .then(setDevice)
-      .finally(() => setLoading(false));
+  const loadDevice = async () => {
+    try {
+      const device = await GetDeviceInfos();
+      setDevice(device);
+    } catch (e) {
+      toast({
+        title: "Could not find the device",
+        status: "warning",
+        description:
+          "The device must be version 2 or up, and must be properly connected to computer",
+      });
+    }
   };
 
   const loadPacks = () => {
@@ -68,14 +80,25 @@ function App() {
   }, [device]);
 
   const handleInstallStory = async () => {
-    await InstallPack();
-    toast({
-      title: "The pack was installed on the device",
-      status: "success",
-      duration: 9000,
-      isClosable: true,
-    });
-    await loadPacks();
+    setIsInstalling(true);
+    try {
+      await InstallPack();
+      toast({
+        title: "The pack was installed on the device",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+      await loadPacks();
+    } catch (e) {
+      toast({
+        title: "Could not install pack on device",
+        status: "warning",
+        description:
+          "Something went wrong while installing the pack on your device",
+      });
+    }
+    setIsInstalling(false);
   };
 
   const handleRemovePack = async (uuid: number[]) => {
@@ -104,7 +127,6 @@ function App() {
                 colorScheme="orange"
                 rightIcon={<MdRefresh />}
                 onClick={loadDevice}
-                isLoading={loading}
               >
                 Refresh
               </Button>
@@ -132,7 +154,7 @@ function App() {
                 <PopoverHeader>Details</PopoverHeader>
                 <PopoverBody>
                   <Box>
-                    Searial Number <Code>{device.serialNumber}</Code>
+                    Serial Number <Code>{device.serialNumber}</Code>
                     Version{" "}
                     <Code>
                       {device.firmwareVersionMajor}.
@@ -150,7 +172,7 @@ function App() {
                 onClick={handleInstallStory}
                 ml={2}
               >
-                Install story
+                Install pack
               </Button>
             </Tooltip>
             <NewPackModal />
@@ -161,10 +183,8 @@ function App() {
               <Thead>
                 <Tr>
                   <Th></Th>
-
-                  <Th fontWeight="bold">Title</Th>
-                  <Th>Ref</Th>
-                  <Th>Uuid</Th>
+                  <Th>Title</Th>
+                  <Th></Th>
                   <Th></Th>
                 </Tr>
               </Thead>
@@ -186,11 +206,20 @@ function App() {
                     />
                   </Td>
 
-                  <Td fontWeight="bold">{p.title}</Td>
-                  <Td>{p.ref}</Td>
-                  <Td>{p.uuid}</Td>
+                  <Td
+                    fontWeight={p.title && "bold"}
+                    opacity={p.title ? 1 : 0.5}
+                  >
+                    {p.title || p.uuid}
+                  </Td>
                   <Td>
-                    <DeleteModal onDelete={() => handleRemovePack(p.uuid)} />
+                    <PackTag metadata={p} />
+                  </Td>
+                  <Td>
+                    <DetailsModal
+                      metadata={p}
+                      onDelete={() => handleRemovePack(p.uuid)}
+                    />
                   </Td>
                 </Tbody>
               ))}
@@ -198,6 +227,8 @@ function App() {
           </Box>
         </Box>
       )}
+
+      <IsInstallingModal isOpen={isInstalling} />
     </Box>
   );
 }

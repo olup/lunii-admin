@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Flex,
+  Tooltip,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -37,15 +38,17 @@ export const NewPackModal = () => {
 
   return (
     <>
-      <Button
-        variant="outline"
-        colorScheme="linkedin"
-        rightIcon={<MdCreate />}
-        ml={2}
-        onClick={onOpen}
-      >
-        Create story
-      </Button>
+      <Tooltip label="Create a story pack from a structured directory">
+        <Button
+          variant="outline"
+          colorScheme="linkedin"
+          rightIcon={<MdCreate />}
+          ml={2}
+          onClick={onOpen}
+        >
+          Create pack
+        </Button>
+      </Tooltip>
 
       <AlertDialog
         isOpen={isOpen}

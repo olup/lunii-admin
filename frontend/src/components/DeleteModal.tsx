@@ -18,12 +18,9 @@ export const DeleteModal: FC<{ onDelete: () => void }> = ({ onDelete }) => {
 
   return (
     <>
-      <IconButton
-        variant="ghost"
-        aria-label="delete"
-        icon={<MdDelete />}
-        onClick={onOpen}
-      />
+      <Button colorScheme={"red"} leftIcon={<MdDelete />} onClick={onOpen}>
+        Delete Story Pack
+      </Button>
 
       <AlertDialog
         isOpen={isOpen}
@@ -33,7 +30,7 @@ export const DeleteModal: FC<{ onDelete: () => void }> = ({ onDelete }) => {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete Story Pack
+              Delete
             </AlertDialogHeader>
 
             <AlertDialogBody>
@@ -50,7 +47,6 @@ export const DeleteModal: FC<{ onDelete: () => void }> = ({ onDelete }) => {
                 colorScheme="red"
                 onClick={() => {
                   onDelete();
-
                   onClose();
                 }}
                 ml={3}

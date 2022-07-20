@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/google/uuid v1.3.0
-	github.com/olup/lunii-cli v0.0.0-20220719192552-4825860e462b
+	github.com/olup/lunii-cli v0.0.0-20220720220011-58404458810d
 	github.com/wailsapp/wails/v2 v2.0.0-beta.38
 )
 
@@ -55,4 +55,4 @@ require (
 )
 
 // replace github.com/wailsapp/wails/v2 v2.0.0-beta.38 => /Users/louptopalian/go/pkg/mod/github.com/wailsapp/wails/v2@v2.0.0-beta.38
-//replace github.com/olup/lunii-cli => ../../
+// replace github.com/olup/lunii-cli => ../lunii-cli
