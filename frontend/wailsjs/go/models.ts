@@ -33,8 +33,7 @@ export namespace lunii {
 	    ref: string;
 	    title: string;
 	    description: string;
-	    isOfficialPack: boolean;
-	    isUnknown: boolean;
+	    packType: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Metadata(source);
@@ -46,8 +45,7 @@ export namespace lunii {
 	        this.ref = source["ref"];
 	        this.title = source["title"];
 	        this.description = source["description"];
-	        this.isOfficialPack = source["isOfficialPack"];
-	        this.isUnknown = source["isUnknown"];
+	        this.packType = source["packType"];
 	    }
 	}
 
