@@ -30,6 +30,7 @@ import {
   MdDelete,
   MdDevices,
   MdRefresh,
+  MdSync,
   MdUpload,
   MdWarning,
 } from "react-icons/md";
@@ -39,6 +40,7 @@ import {
   InstallPack,
   RemovePack,
   ChangePackOrder,
+  SyncLuniiStoreMetadata,
 } from "../wailsjs/go/main/App";
 import { lunii } from "../wailsjs/go/models";
 import { DeleteModal } from "./components/DeleteModal";
@@ -117,6 +119,19 @@ function App() {
     await loadPacks();
   };
 
+  const handleSyncLuniiStoreMetadata = async () => {
+    const uuids = packs
+      //.filter((p) => p.packType === "undefined")
+      .map((p) => p.uuid);
+
+    await SyncLuniiStoreMetadata(uuids);
+    toast({
+      title: "Metadata have been downloaded",
+      status: "success",
+    });
+    await loadPacks();
+  };
+
   return (
     <Box id="App" p={3}>
       {!device && (
@@ -164,6 +179,17 @@ function App() {
                 </PopoverBody>
               </PopoverContent>
             </Popover>
+            <Tooltip label="Download available metadatas from lunii store">
+              <Button
+                variant="outline"
+                colorScheme="linkedin"
+                rightIcon={<MdSync />}
+                onClick={handleSyncLuniiStoreMetadata}
+                ml={2}
+              >
+                Sync Metadata
+              </Button>
+            </Tooltip>
             <Tooltip label="Install a STUdio story pack to your device">
               <Button
                 variant="outline"

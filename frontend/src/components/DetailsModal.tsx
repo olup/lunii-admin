@@ -44,14 +44,14 @@ export const DetailsModal: FC<{
           <ModalHeader></ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Flex mb={2}>
-              <Text mr={2} fontWeight="bold">
-                {metadata.title}
-              </Text>
+            <Box mb={2}>
               <PackTag metadata={metadata} />
-            </Flex>
-            <Tag mb={2}>{metadata.uuid}</Tag>
+            </Box>
+            <Text fontSize={20} mb={2} fontWeight="bold">
+              {metadata.title}
+            </Text>
             <Box mb={2}>{parsedDescription}</Box>
+            <Tag mb={2}>{metadata.uuid}</Tag>
           </ModalBody>
 
           <ModalFooter>

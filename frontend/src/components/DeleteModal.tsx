@@ -18,7 +18,12 @@ export const DeleteModal: FC<{ onDelete: () => void }> = ({ onDelete }) => {
 
   return (
     <>
-      <Button colorScheme={"red"} leftIcon={<MdDelete />} onClick={onOpen}>
+      <Button
+        colorScheme={"red"}
+        size="sm"
+        leftIcon={<MdDelete />}
+        onClick={onOpen}
+      >
         Delete Story Pack
       </Button>
 

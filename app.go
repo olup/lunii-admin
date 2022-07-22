@@ -123,3 +123,39 @@ func (a *App) ChangePackOrder(uuid uuid.UUID, index int) (string, error) {
 
 	return "", nil
 }
+
+func (a *App) SyncLuniiStoreMetadata(uuids []uuid.UUID) (string, error) {
+	device, err := lunii.GetDevice()
+	if err != nil {
+		return "", err
+	}
+
+	db, err := lunii.GetLuniiMetadataDb()
+	if err != nil {
+		return "", err
+	}
+
+	for _, thisUuid := range uuids {
+		device.SyncMetadataFromDb(thisUuid, db)
+	}
+
+	return "", nil
+}
+
+func (a *App) SyncStudioMetadata(uuids []uuid.UUID, dbPath string) (string, error) {
+	device, err := lunii.GetDevice()
+	if err != nil {
+		return "", err
+	}
+
+	db, err := lunii.GetStudioMetadataDb(dbPath)
+	if err != nil {
+		return "", err
+	}
+
+	for _, thisUuid := range uuids {
+		device.SyncMetadataFromDb(thisUuid, db)
+	}
+
+	return "", nil
+}
