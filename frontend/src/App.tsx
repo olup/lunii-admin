@@ -22,6 +22,7 @@ import {
   Tr,
   useToast,
 } from "@chakra-ui/react";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import {
   MdArrowDownward,
@@ -48,38 +49,24 @@ import { DetailsModal } from "./components/DetailsModal";
 import { IsInstallingModal } from "./components/IsInstallingModal";
 import { NewPackModal } from "./components/NewPackModal";
 import { PackTag } from "./components/PackTag";
+import { SyncMdMenu } from "./components/SyncMdMenu";
 
 function App() {
-  const [device, setDevice] = useState<lunii.Device>();
-  const [isInstalling, setIsInstalling] = useState(false);
-  const [packs, setPacks] = useState<lunii.Metadata[]>([]);
-  const toast = useToast();
-
-  const loadDevice = async () => {
-    try {
-      const device = await GetDeviceInfos();
-      setDevice(device);
-    } catch (e) {
-      toast({
-        title: "Could not find the device",
-        status: "warning",
-        description:
-          "The device must be version 2 or up, and must be properly connected to computer",
-      });
+  const { data: device, refetch: refetchDevice } = useQuery(
+    ["device"],
+    GetDeviceInfos
+  );
+  const { data: packs, refetch: refetchPacks } = useQuery(
+    ["packs"],
+    ListPacks,
+    {
+      refetchOnMount: true,
+      enabled: !!device,
     }
-  };
+  );
 
-  const loadPacks = () => {
-    ListPacks().then(setPacks);
-  };
-
-  useEffect(() => {
-    loadDevice();
-  }, []);
-
-  useEffect(() => {
-    loadPacks();
-  }, [device]);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const toast = useToast();
 
   const handleInstallStory = async () => {
     setIsInstalling(true);
@@ -91,7 +78,7 @@ function App() {
         duration: 9000,
         isClosable: true,
       });
-      await loadPacks();
+      await refetchPacks();
     } catch (e) {
       toast({
         title: "Could not install pack on device",
@@ -111,25 +98,12 @@ function App() {
       duration: 9000,
       isClosable: true,
     });
-    await loadPacks();
+    await refetchPacks();
   };
 
   const handleChangePackOrder = async (uuid: number[], position: number) => {
     await ChangePackOrder(uuid, position);
-    await loadPacks();
-  };
-
-  const handleSyncLuniiStoreMetadata = async () => {
-    const uuids = packs
-      //.filter((p) => p.packType === "undefined")
-      .map((p) => p.uuid);
-
-    await SyncLuniiStoreMetadata(uuids);
-    toast({
-      title: "Metadata have been downloaded",
-      status: "success",
-    });
-    await loadPacks();
+    await refetchPacks();
   };
 
   return (
@@ -141,7 +115,7 @@ function App() {
               <Button
                 colorScheme="orange"
                 rightIcon={<MdRefresh />}
-                onClick={loadDevice}
+                onClick={() => refetchDevice}
               >
                 Refresh
               </Button>
@@ -155,41 +129,34 @@ function App() {
           </Center>
         </>
       )}
+
       {device && (
         <Box>
           <Box display="flex">
-            <Popover placement="bottom-start" closeOnBlur={false}>
-              <PopoverTrigger>
-                <Button colorScheme="linkedin" leftIcon={<MdDevices />}>
-                  My Lunii
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <PopoverCloseButton />
-                <PopoverHeader>Details</PopoverHeader>
-                <PopoverBody>
-                  <Box>
-                    Serial Number <Code>{device.serialNumber}</Code>
-                    Version{" "}
-                    <Code>
-                      {device.firmwareVersionMajor}.
-                      {device.firmwareVersionMinor}
-                    </Code>
-                  </Box>
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
-            <Tooltip label="Download available metadatas from lunii store">
-              <Button
-                variant="outline"
-                colorScheme="linkedin"
-                rightIcon={<MdSync />}
-                onClick={handleSyncLuniiStoreMetadata}
-                ml={2}
-              >
-                Sync Metadata
-              </Button>
-            </Tooltip>
+            <Box mr={2}>
+              <Popover placement="bottom-start" closeOnBlur={false}>
+                <PopoverTrigger>
+                  <Button colorScheme="linkedin" leftIcon={<MdDevices />}>
+                    My Lunii
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverCloseButton />
+                  <PopoverHeader>Details</PopoverHeader>
+                  <PopoverBody>
+                    <Box>
+                      Serial Number <Code>{device.serialNumber}</Code>
+                      Version{" "}
+                      <Code>
+                        {device.firmwareVersionMajor}.
+                        {device.firmwareVersionMinor}
+                      </Code>
+                    </Box>
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+            </Box>
+            <SyncMdMenu />
             <Tooltip label="Install a STUdio story pack to your device">
               <Button
                 variant="outline"
@@ -253,7 +220,6 @@ function App() {
           </Box>
         </Box>
       )}
-
       <IsInstallingModal isOpen={isInstalling} />
     </Box>
   );
