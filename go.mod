@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/google/uuid v1.3.0
 	github.com/olup/lunii-cli v0.0.0-20220722052415-f5ec020dcae7
-	github.com/wailsapp/wails/v2 v2.0.0-beta.39.2
+	github.com/wailsapp/wails/v2 v2.0.0-beta.38
 )
 
 require (
@@ -50,6 +50,7 @@ require (
 	github.com/qiniu/audio v0.2.1 // indirect
 	github.com/qiniu/x v1.11.9 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/therootcompany/xz v1.0.1 // indirect
 	github.com/tkrajina/go-reflector v0.5.6 // indirect
 	github.com/tosone/minimp3 v1.0.1 // indirect

@@ -73,16 +73,23 @@ func (a *App) CreatePack(directoryPath string, destinationPath string) (string, 
 
 func (a *App) OpenDirectory(title string) string {
 	path, _ := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
-		Title: "title",
+		Title: title,
 	})
 	return path
 }
 
 func (a *App) SaveFile(title string, defaultDirectory string, defaultFileName string) string {
 	path, _ := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
-		Title:            "title",
+		Title:            title,
 		DefaultDirectory: defaultDirectory,
 		DefaultFilename:  defaultFileName,
+	})
+	return path
+}
+
+func (a *App) OpenFile(title string) string {
+	path, _ := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: title,
 	})
 	return path
 }

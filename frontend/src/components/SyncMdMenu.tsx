@@ -14,7 +14,13 @@ import {
   MdOutlineCloud,
   MdOutlineComputer,
 } from "react-icons/md";
-import { ListPacks, SyncLuniiStoreMetadata } from "../../wailsjs/go/main/App";
+import {
+  ListPacks,
+  OpenDirectory,
+  OpenFile,
+  SyncLuniiStoreMetadata,
+  SyncStudioMetadata,
+} from "../../wailsjs/go/main/App";
 
 export const SyncMdMenu = () => {
   const { data: packs, refetch } = useQuery(["packs"], ListPacks);
@@ -23,6 +29,22 @@ export const SyncMdMenu = () => {
   const handleSyncLuniiStoreMetadata = async () => {
     const uuids = packs?.map((p) => p.uuid) || [];
     await SyncLuniiStoreMetadata(uuids);
+    toast({
+      title: "Metadata have been downloaded",
+      status: "success",
+    });
+    await refetch();
+  };
+
+  const handleSyncStudioMetadata = async (customPath = false) => {
+    const uuids = packs?.map((p) => p.uuid) || [];
+    let dbPath = "";
+
+    if (customPath) {
+      dbPath = await OpenFile("Select Studio DB location");
+    }
+
+    await SyncStudioMetadata(uuids, dbPath);
     toast({
       title: "Metadata have been downloaded",
       status: "success",
@@ -47,8 +69,18 @@ export const SyncMdMenu = () => {
         >
           From lunii store
         </MenuItem>
-        <MenuItem icon={<MdOutlineComputer />}>From default studio DB</MenuItem>
-        <MenuItem icon={<MdOutlineComputer />}>From custom studio db</MenuItem>
+        <MenuItem
+          icon={<MdOutlineComputer />}
+          onClick={() => handleSyncStudioMetadata()}
+        >
+          From default studio DB
+        </MenuItem>
+        <MenuItem
+          icon={<MdOutlineComputer />}
+          onClick={() => handleSyncStudioMetadata(true)}
+        >
+          From custom studio db
+        </MenuItem>
       </MenuList>
     </Menu>
   );
