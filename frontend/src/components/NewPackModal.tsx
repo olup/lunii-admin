@@ -20,7 +20,7 @@ import {
   MdOutlineInsertDriveFile,
 } from "react-icons/md";
 import { CreatePack, OpenDirectory, SaveFile } from "../../wailsjs/go/main/App";
-import { basename, dirname } from "path-browserify";
+import { basename, dirname } from "../utils";
 
 export const NewPackModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

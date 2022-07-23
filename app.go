@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -83,6 +84,7 @@ func (a *App) OpenDirectory(title string) string {
 }
 
 func (a *App) SaveFile(title string, defaultDirectory string, defaultFileName string) string {
+	fmt.Println("Select save path - options : ", defaultDirectory, defaultFileName)
 	path, _ := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		Title:            title,
 		DefaultDirectory: defaultDirectory,
