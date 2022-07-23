@@ -115,7 +115,7 @@ function App() {
               <Button
                 colorScheme="orange"
                 rightIcon={<MdRefresh />}
-                onClick={() => refetchDevice}
+                onClick={() => refetchDevice()}
               >
                 Refresh
               </Button>
