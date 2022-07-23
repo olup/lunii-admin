@@ -6,18 +6,7 @@ on:
       - main
 
 jobs:
-  clean-next-release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: dev-drprasad/delete-tag-and-release@v0.2.0
-        with:
-          delete_release: true
-          tag_name: next
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   build-windows:
-    needs: clean-next-release
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -63,7 +52,6 @@ jobs:
           tag: next
 
   build-linux:
-    needs: clean-next-release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -110,7 +98,6 @@ jobs:
           tag: next
 
   build-macos-amd:
-    needs: clean-next-release
     runs-on: macos-latest
     steps:
       - name: Checkout
