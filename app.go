@@ -2,10 +2,14 @@ package main
 
 import (
 	"context"
+	"log"
 	"os"
 	"path/filepath"
 
+	"github.com/blang/semver"
 	"github.com/google/uuid"
+	"github.com/rhysd/go-github-selfupdate/selfupdate"
+
 	"github.com/olup/lunii-cli/pkg/lunii"
 	studiopackbuilder "github.com/olup/lunii-cli/pkg/pack-builder"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -165,4 +169,19 @@ func (a *App) SyncStudioMetadata(uuids []uuid.UUID, dbPath string) (string, erro
 	}
 
 	return "", nil
+}
+
+func (a *App) CheckForUpdate() (bool, string, string) {
+	latest, found, err := selfupdate.DetectLatest("olup/lunii-admin")
+	v := semver.MustParse("0.0.3")
+	if err != nil {
+		log.Println("Error occurred while detecting version:", err)
+		return false, "", ""
+	}
+
+	if !found || latest.Version.LTE(v) {
+		log.Println("Current version is the latest")
+		return false, "", ""
+	}
+	return true, latest.Version.String(), latest.ReleaseNotes
 }

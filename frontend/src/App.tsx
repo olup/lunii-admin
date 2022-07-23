@@ -42,6 +42,7 @@ import {
   RemovePack,
   ChangePackOrder,
   SyncLuniiStoreMetadata,
+  CheckForUpdate,
 } from "../wailsjs/go/main/App";
 import { lunii } from "../wailsjs/go/models";
 import { DeleteModal } from "./components/DeleteModal";
@@ -67,6 +68,8 @@ function App() {
 
   const [isInstalling, setIsInstalling] = useState(false);
   const toast = useToast();
+
+  CheckForUpdate().then((r) => console.log(r));
 
   const handleInstallStory = async () => {
     setIsInstalling(true);

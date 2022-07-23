@@ -40,7 +40,7 @@ jobs:
         run: |
           Set-Item -Path Env:CGO_LDFLAGS -Value "-LD:/a/lunii-admin/lunii-admin/bindings/windows/lib"
           Set-Item -Path Env:CGO_CFLAGS -Value "-ID:/a/lunii-admin/lunii-admin/bindings/windows/include"
-          wails build -o lunii-admin-windows.exe -ldflags "-v '-extldflags=-static -lm'"
+          wails build -debug -o lunii-admin-windows.exe -ldflags "-v '-extldflags=-static -lm'"
 
       - uses: ncipollo/release-action@v1
         with:
@@ -86,7 +86,7 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
-        run: wails build -o lunii-admin-linux
+        run: wails build -debug -o lunii-admin-linux
 
       - uses: ncipollo/release-action@v1
         with:
@@ -131,7 +131,7 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
-        run: wails build
+        run: wails build -debug
 
       - name: Create DMG
         run: |
