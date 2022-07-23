@@ -1,0 +1,136 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: ls D:/a/lunii-admin/lunii-admin/bindings/windows/lib
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ">=1.18.0"
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~\AppData\Local\go-build
+            ~\go\pkg\mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Set up Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Build
+        run: |
+          Set-Item -Path Env:CGO_LDFLAGS -Value "-LD:/a/lunii-admin/lunii-admin/bindings/windows/lib"
+          Set-Item -Path Env:CGO_CFLAGS -Value "-ID:/a/lunii-admin/lunii-admin/bindings/windows/include"
+          wails build -o lunii-admin-windows.exe -ldflags "-v '-extldflags=-static -lm'"
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/bin/lunii-admin-windows.exe"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Linux Wails deps
+        run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
+
+      - run: sudo apt install libmp3lame-dev
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ">=1.18.0"
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~\AppData\Local\go-build
+            ~\go\pkg\mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Set up Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Build
+        run: wails build -o lunii-admin-linux
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/bin/lunii-admin-linux"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-macos-amd:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # LAme is installed, but we want to remove the dynamic lib
+      - name: Delete dynamic version of Lame
+        run: rm /usr/local/opt/lame/lib/libmp3lame.0.dylib
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ">=1.18.0"
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~\AppData\Local\go-build
+            ~\go\pkg\mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Set up Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Build
+        run: wails build
+
+      - name: Create DMG
+        run: |
+          brew install create-dmg
+          create-dmg lunii-admin-macos.dmg build/bin/lunii-admin.app
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "lunii-admin-macos.dmg"
+          token: ${{ secrets.GITHUB_TOKEN }}
