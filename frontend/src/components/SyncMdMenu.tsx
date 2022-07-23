@@ -10,9 +10,11 @@ import { useQuery } from "@tanstack/react-query";
 import {
   MdArrowDownward,
   MdCloud,
+  MdDownload,
   MdMenu,
   MdOutlineCloud,
   MdOutlineComputer,
+  MdSettings,
 } from "react-icons/md";
 import {
   ListPacks,
@@ -56,8 +58,8 @@ export const SyncMdMenu = () => {
     <Menu>
       <MenuButton
         as={Button}
-        rightIcon={<MdMenu />}
-        variant="outline"
+        leftIcon={<MdDownload />}
+        variant="ghost"
         colorScheme="linkedin"
       >
         Sync Metadata

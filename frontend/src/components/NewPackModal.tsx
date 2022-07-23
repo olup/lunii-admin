@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import {
+  MdBackpack,
   MdCreate,
   MdFlashOn,
   MdOutlineFolder,
@@ -40,9 +41,9 @@ export const NewPackModal = () => {
     <>
       <Tooltip label="Create a story pack from a structured directory">
         <Button
-          variant="outline"
+          variant="ghost"
           colorScheme="linkedin"
-          rightIcon={<MdCreate />}
+          leftIcon={<MdBackpack />}
           ml={2}
           onClick={onOpen}
         >

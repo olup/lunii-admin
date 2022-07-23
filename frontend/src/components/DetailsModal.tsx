@@ -13,21 +13,46 @@ import {
   Tag,
   Text,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import React, { FC } from "react";
-import { MdMenu } from "react-icons/md";
+import {
+  MdDetails,
+  MdMenu,
+  MdMore,
+  MdOpenInFull,
+  MdPlusOne,
+  MdRemoveRedEye,
+} from "react-icons/md";
 import { lunii } from "../../wailsjs/go/models";
 import { DeleteModal } from "./DeleteModal";
 import { PackTag } from "./PackTag";
 import parse from "html-react-parser";
+import { ListPacks, RemovePack } from "../../wailsjs/go/main/App";
+import { useQuery } from "@tanstack/react-query";
 
 export const DetailsModal: FC<{
-  metadata: lunii.Metadata;
-  onDelete: () => any;
-}> = ({ metadata, onDelete }) => {
+  uuid: number[];
+}> = ({ uuid }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { data: packs, refetch: refetchPacks } = useQuery(["packs"], ListPacks);
+  const pack = packs?.find((p) => p.uuid === uuid);
+  const toast = useToast();
 
-  const parsedDescription = parse(metadata.description);
+  if (!pack) return null;
+
+  const parsedDescription = parse(pack.description);
+
+  const handleRemovePack = async () => {
+    await RemovePack(pack.uuid);
+    toast({
+      title: "The pack was deleted from the device",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
+    await refetchPacks();
+  };
 
   return (
     <>
@@ -45,17 +70,17 @@ export const DetailsModal: FC<{
           <ModalCloseButton />
           <ModalBody>
             <Box mb={2}>
-              <PackTag metadata={metadata} />
+              <PackTag metadata={pack} />
             </Box>
             <Text fontSize={20} mb={2} fontWeight="bold">
-              {metadata.title}
+              {pack.title}
             </Text>
             <Box mb={2}>{parsedDescription}</Box>
-            <Tag mb={2}>{metadata.uuid}</Tag>
+            <Tag mb={2}>{pack.uuid}</Tag>
           </ModalBody>
 
           <ModalFooter>
-            <DeleteModal onDelete={onDelete} />
+            <DeleteModal onDelete={handleRemovePack} />
           </ModalFooter>
         </ModalContent>
       </Modal>

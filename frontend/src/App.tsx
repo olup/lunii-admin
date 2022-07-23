@@ -12,7 +12,6 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Table,
-  Tag,
   Tbody,
   Td,
   Text,
@@ -22,30 +21,22 @@ import {
   Tr,
   useToast,
 } from "@chakra-ui/react";
-import { QueryClient, useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import {
   MdArrowDownward,
   MdArrowUpward,
-  MdCreate,
-  MdDelete,
   MdDevices,
   MdRefresh,
-  MdSync,
   MdUpload,
-  MdWarning,
 } from "react-icons/md";
 import {
-  GetDeviceInfos,
-  ListPacks,
-  InstallPack,
-  RemovePack,
   ChangePackOrder,
-  SyncLuniiStoreMetadata,
-  CheckForUpdate,
+  GetDeviceInfos,
+  InstallPack,
+  ListPacks,
+  RemovePack,
 } from "../wailsjs/go/main/App";
-import { lunii } from "../wailsjs/go/models";
-import { DeleteModal } from "./components/DeleteModal";
 import { DetailsModal } from "./components/DetailsModal";
 import { IsInstallingModal } from "./components/IsInstallingModal";
 import { NewPackModal } from "./components/NewPackModal";
@@ -69,8 +60,6 @@ function App() {
   const [isInstalling, setIsInstalling] = useState(false);
   const toast = useToast();
 
-  CheckForUpdate().then((r) => console.log(r));
-
   const handleInstallStory = async () => {
     setIsInstalling(true);
     try {
@@ -91,17 +80,6 @@ function App() {
       });
     }
     setIsInstalling(false);
-  };
-
-  const handleRemovePack = async (uuid: number[]) => {
-    await RemovePack(uuid);
-    toast({
-      title: "The pack was deleted from the device",
-      status: "success",
-      duration: 9000,
-      isClosable: true,
-    });
-    await refetchPacks();
   };
 
   const handleChangePackOrder = async (uuid: number[], position: number) => {
@@ -162,9 +140,9 @@ function App() {
             <SyncMdMenu />
             <Tooltip label="Install a STUdio story pack to your device">
               <Button
-                variant="outline"
+                variant="ghost"
                 colorScheme="linkedin"
-                rightIcon={<MdUpload />}
+                leftIcon={<MdUpload />}
                 onClick={handleInstallStory}
                 ml={2}
               >
@@ -212,10 +190,7 @@ function App() {
                     <PackTag metadata={p} />
                   </Td>
                   <Td>
-                    <DetailsModal
-                      metadata={p}
-                      onDelete={() => handleRemovePack(p.uuid)}
-                    />
+                    <DetailsModal uuid={p.uuid} />
                   </Td>
                 </Tbody>
               ))}
