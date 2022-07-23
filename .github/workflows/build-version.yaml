@@ -45,6 +45,7 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
+          replacesArtifacts: true
           artifacts: "build/bin/lunii-admin-windows.exe"
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -88,6 +89,7 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
+          replacesArtifacts: true
           artifacts: "build/bin/lunii-admin-linux"
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -135,5 +137,6 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
+          replacesArtifacts: true
           artifacts: "lunii-admin-macos.dmg"
           token: ${{ secrets.GITHUB_TOKEN }}
