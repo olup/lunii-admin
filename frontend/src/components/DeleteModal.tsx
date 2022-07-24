@@ -10,7 +10,7 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import React, { FC } from "react";
-import { MdDelete } from "react-icons/md";
+import { FiTrash } from "react-icons/fi";
 
 export const DeleteModal: FC<{ onDelete: () => void }> = ({ onDelete }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -21,7 +21,7 @@ export const DeleteModal: FC<{ onDelete: () => void }> = ({ onDelete }) => {
       <Button
         colorScheme={"red"}
         size="sm"
-        leftIcon={<MdDelete />}
+        leftIcon={<FiTrash />}
         onClick={onOpen}
       >
         Delete Story Pack

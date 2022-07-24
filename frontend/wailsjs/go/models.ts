@@ -1,25 +1,5 @@
 export namespace lunii {
 	
-	export class Metadata {
-	    uuid: number[];
-	    ref: string;
-	    title: string;
-	    description: string;
-	    packType: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new Metadata(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.uuid = source["uuid"];
-	        this.ref = source["ref"];
-	        this.title = source["title"];
-	        this.description = source["description"];
-	        this.packType = source["packType"];
-	    }
-	}
 	export class Device {
 	    mountPoint: string;
 	    uuid: number[];
@@ -46,6 +26,26 @@ export namespace lunii {
 	        this.firmwareVersionMinor = source["firmwareVersionMinor"];
 	        this.sdCardSize = source["sdCardSize"];
 	        this.sdCardUsed = source["sdCardUsed"];
+	    }
+	}
+	export class Metadata {
+	    uuid: number[];
+	    ref: string;
+	    title: string;
+	    description: string;
+	    packType: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Metadata(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.uuid = source["uuid"];
+	        this.ref = source["ref"];
+	        this.title = source["title"];
+	        this.description = source["description"];
+	        this.packType = source["packType"];
 	    }
 	}
 

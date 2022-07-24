@@ -7,15 +7,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  MdArrowDownward,
-  MdCloud,
-  MdDownload,
-  MdMenu,
-  MdOutlineCloud,
-  MdOutlineComputer,
-  MdSettings,
-} from "react-icons/md";
+import { FiCloud, FiDownload, FiHardDrive } from "react-icons/fi";
 import {
   ListPacks,
   OpenDirectory,
@@ -58,27 +50,24 @@ export const SyncMdMenu = () => {
     <Menu>
       <MenuButton
         as={Button}
-        leftIcon={<MdDownload />}
+        leftIcon={<FiDownload />}
         variant="ghost"
         colorScheme="linkedin"
       >
         Sync Metadata
       </MenuButton>
       <MenuList>
-        <MenuItem
-          icon={<MdOutlineCloud />}
-          onClick={handleSyncLuniiStoreMetadata}
-        >
+        <MenuItem icon={<FiCloud />} onClick={handleSyncLuniiStoreMetadata}>
           From lunii store
         </MenuItem>
         <MenuItem
-          icon={<MdOutlineComputer />}
+          icon={<FiHardDrive />}
           onClick={() => handleSyncStudioMetadata()}
         >
           From default studio DB
         </MenuItem>
         <MenuItem
-          icon={<MdOutlineComputer />}
+          icon={<FiHardDrive />}
           onClick={() => handleSyncStudioMetadata(true)}
         >
           From custom studio db

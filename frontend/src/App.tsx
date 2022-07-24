@@ -24,18 +24,18 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import {
-  MdArrowDownward,
-  MdArrowUpward,
-  MdDevices,
-  MdRefresh,
-  MdUpload,
-} from "react-icons/md";
+  FiArrowDown,
+  FiArrowUp,
+  FiRefreshCcw,
+  FiSmartphone,
+  FiUpload,
+} from "react-icons/fi";
+import { BiPlug } from "react-icons/bi";
 import {
   ChangePackOrder,
   GetDeviceInfos,
   InstallPack,
   ListPacks,
-  RemovePack,
 } from "../wailsjs/go/main/App";
 import { DetailsModal } from "./components/DetailsModal";
 import { IsInstallingModal } from "./components/IsInstallingModal";
@@ -95,7 +95,7 @@ function App() {
             <Tooltip label="Try refreshing after the device has been mounted by the system">
               <Button
                 colorScheme="orange"
-                rightIcon={<MdRefresh />}
+                rightIcon={<FiRefreshCcw />}
                 onClick={() => refetchDevice()}
               >
                 Refresh
@@ -103,8 +103,8 @@ function App() {
             </Tooltip>
             <NewPackModal />
           </Box>
-          <Center opacity={0.3} fontSize={30} h={500} flexDirection="column">
-            <Icon fontSize={100} as={MdDevices}></Icon>
+          <Center opacity={0.3} fontSize={20} h={500} flexDirection="column">
+            <Icon as={BiPlug}></Icon>
 
             <Text>No device connected</Text>
           </Center>
@@ -112,12 +112,21 @@ function App() {
       )}
 
       {device && (
-        <Box>
-          <Box display="flex">
-            <Box mr={2}>
+        <Box pt="56px">
+          <Box
+            display="flex"
+            position="fixed"
+            backgroundColor="white"
+            zIndex={2}
+            top={0}
+            right={0}
+            left={0}
+            p={2}
+          >
+            <Box>
               <Popover placement="bottom-start" closeOnBlur={false}>
                 <PopoverTrigger>
-                  <Button colorScheme="linkedin" leftIcon={<MdDevices />}>
+                  <Button colorScheme="linkedin" leftIcon={<FiSmartphone />}>
                     My Lunii
                   </Button>
                 </PopoverTrigger>
@@ -137,12 +146,14 @@ function App() {
                 </PopoverContent>
               </Popover>
             </Box>
-            <SyncMdMenu />
+            <Box ml={2}>
+              <SyncMdMenu />
+            </Box>
             <Tooltip label="Install a STUdio story pack to your device">
               <Button
                 variant="ghost"
                 colorScheme="linkedin"
-                leftIcon={<MdUpload />}
+                leftIcon={<FiUpload />}
                 onClick={handleInstallStory}
                 ml={2}
               >
@@ -168,14 +179,14 @@ function App() {
                     <IconButton
                       size="xs"
                       aria-label="up"
-                      icon={<MdArrowUpward />}
+                      icon={<FiArrowUp />}
                       mr={1}
                       onClick={() => handleChangePackOrder(p.uuid, i - 1)}
                     />
                     <IconButton
                       size="xs"
                       aria-label="down"
-                      icon={<MdArrowDownward />}
+                      icon={<FiArrowDown />}
                       onClick={() => handleChangePackOrder(p.uuid, i + 1)}
                     />
                   </Td>

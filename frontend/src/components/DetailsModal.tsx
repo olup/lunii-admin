@@ -16,14 +16,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { FC } from "react";
-import {
-  MdDetails,
-  MdMenu,
-  MdMore,
-  MdOpenInFull,
-  MdPlusOne,
-  MdRemoveRedEye,
-} from "react-icons/md";
+import { FiMenu, FiMoreVertical } from "react-icons/fi";
 import { lunii } from "../../wailsjs/go/models";
 import { DeleteModal } from "./DeleteModal";
 import { PackTag } from "./PackTag";
@@ -51,6 +44,7 @@ export const DetailsModal: FC<{
       duration: 9000,
       isClosable: true,
     });
+    onClose();
     await refetchPacks();
   };
 
@@ -59,7 +53,7 @@ export const DetailsModal: FC<{
       <IconButton
         variant="ghost"
         aria-label="Details"
-        icon={<MdMenu />}
+        icon={<FiMoreVertical />}
         onClick={onOpen}
       />
 

@@ -13,13 +13,8 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import {
-  MdBackpack,
-  MdCreate,
-  MdFlashOn,
-  MdOutlineFolder,
-  MdOutlineInsertDriveFile,
-} from "react-icons/md";
+import { BiCog, BiPackage } from "react-icons/bi";
+import { FiCloudLightning, FiFile, FiFolder, FiPackage } from "react-icons/fi";
 import { CreatePack, OpenDirectory, SaveFile } from "../../wailsjs/go/main/App";
 import { basename, dirname } from "../utils";
 
@@ -43,7 +38,7 @@ export const NewPackModal = () => {
         <Button
           variant="ghost"
           colorScheme="linkedin"
-          leftIcon={<MdBackpack />}
+          leftIcon={<FiPackage />}
           ml={2}
           onClick={onOpen}
         >
@@ -68,7 +63,7 @@ export const NewPackModal = () => {
                 your system
                 <Flex mt={2}>
                   <Button
-                    leftIcon={<MdOutlineFolder />}
+                    leftIcon={<FiFolder />}
                     colorScheme={directoryPath ? "green" : undefined}
                     onClick={() =>
                       OpenDirectory("Choose Directory").then(setDirectoryPath)
@@ -83,7 +78,7 @@ export const NewPackModal = () => {
                   Where should the pack be saved (.zip) ?
                   <Flex mt={2}>
                     <Button
-                      leftIcon={<MdOutlineInsertDriveFile />}
+                      leftIcon={<FiFile />}
                       colorScheme={destinationPath ? "green" : undefined}
                       onClick={() =>
                         SaveFile(
@@ -106,7 +101,7 @@ export const NewPackModal = () => {
               </Button>
               {directoryPath && destinationPath && (
                 <Button
-                  rightIcon={<MdFlashOn />}
+                  rightIcon={<FiPackage />}
                   colorScheme="green"
                   ref={cancelRef}
                   ml={2}
