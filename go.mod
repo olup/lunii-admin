@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/google/uuid v1.3.0
-	github.com/olup/lunii-cli v0.0.0-20220723220854-09db644fb9f7
+	github.com/olup/lunii-cli v0.0.0-20220724111421-28d78cab98b2
 	github.com/rhysd/go-github-selfupdate v1.2.3
 	github.com/wailsapp/wails/v2 v2.0.0-beta.38
 )
