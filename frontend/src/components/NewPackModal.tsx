@@ -106,16 +106,27 @@ export const NewPackModal = () => {
                   ref={cancelRef}
                   ml={2}
                   onClick={() =>
-                    CreatePack(directoryPath, destinationPath).then(() => {
-                      toast({
-                        title: "Your story pack was created",
-                        description: "You can now install it on your device",
-                        status: "success",
-                        duration: 9000,
-                        isClosable: true,
-                      });
-                      handleClose();
-                    })
+                    CreatePack(directoryPath, destinationPath)
+                      .then(() => {
+                        toast({
+                          title: "Your story pack was created",
+                          description: "You can now install it on your device",
+                          status: "success",
+                          duration: 9000,
+                          isClosable: true,
+                        });
+                        handleClose();
+                      })
+                      .catch((err) => {
+                        toast({
+                          title: "Something went wrong creating the pack",
+                          description: err,
+                          status: "error",
+                          duration: 9000,
+                          isClosable: true,
+                        });
+                        handleClose();
+                      })
                   }
                 >
                   Create

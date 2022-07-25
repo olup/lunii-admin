@@ -21,28 +21,45 @@ export const SyncMdMenu = () => {
   const toast = useToast();
 
   const handleSyncLuniiStoreMetadata = async () => {
-    const uuids = packs?.map((p) => p.uuid) || [];
-    await SyncLuniiStoreMetadata(uuids);
-    toast({
-      title: "Metadata have been downloaded",
-      status: "success",
-    });
+    try {
+      const uuids = packs?.map((p) => p.uuid) || [];
+      await SyncLuniiStoreMetadata(uuids);
+      toast({
+        title: "Metadata have been synced",
+        status: "success",
+      });
+    } catch (err) {
+      toast({
+        title: "Could not sync metadata",
+        status: "error",
+        description: err as string,
+      });
+    }
+
     await refetch();
   };
 
   const handleSyncStudioMetadata = async (customPath = false) => {
-    const uuids = packs?.map((p) => p.uuid) || [];
-    let dbPath = "";
+    try {
+      const uuids = packs?.map((p) => p.uuid) || [];
+      let dbPath = "";
 
-    if (customPath) {
-      dbPath = await OpenFile("Select Studio DB location");
+      if (customPath) {
+        dbPath = await OpenFile("Select Studio DB location");
+      }
+
+      await SyncStudioMetadata(uuids, dbPath);
+      toast({
+        title: "Metadata have been synced",
+        status: "success",
+      });
+    } catch (err) {
+      toast({
+        title: "Could not sync metadata",
+        status: "error",
+        description: err as string,
+      });
     }
-
-    await SyncStudioMetadata(uuids, dbPath);
-    toast({
-      title: "Metadata have been downloaded",
-      status: "success",
-    });
     await refetch();
   };
 
