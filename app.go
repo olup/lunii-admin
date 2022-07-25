@@ -126,11 +126,13 @@ func (a *App) ChangePackOrder(uuid uuid.UUID, index int) (string, error) {
 
 	device, err := lunii.GetDevice()
 	if err != nil {
+		fmt.Println(err)
 		return "", err
 	}
 
 	err = device.ChangePackOrder(uuid, index)
 	if err != nil {
+		fmt.Println(err)
 		return "", err
 	}
 

@@ -83,8 +83,16 @@ function App() {
   };
 
   const handleChangePackOrder = async (uuid: number[], position: number) => {
-    await ChangePackOrder(uuid, position);
-    await refetchPacks();
+    try {
+      await ChangePackOrder(uuid, position);
+      await refetchPacks();
+    } catch (err) {
+      toast({
+        status: "error",
+        title: "Could not reorder the pack",
+        description: err as string,
+      });
+    }
   };
 
   return (
