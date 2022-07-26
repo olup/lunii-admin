@@ -7,7 +7,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/olup/lunii-cli v0.0.0-20220725191737-f038d3f30c7e
 	github.com/rhysd/go-github-selfupdate v1.2.3
-	github.com/wailsapp/wails/v2 v2.0.0-beta.38
+	github.com/wailsapp/wails/v2 v2.0.0-beta.42
 )
 
 require (

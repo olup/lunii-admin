@@ -11,11 +11,11 @@ const root = createRoot(container!);
 const queryClient = new QueryClient();
 
 root.render(
-  <React.StrictMode>
-    <ChakraProvider>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    </ChakraProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <ChakraProvider>
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  </ChakraProvider>
+  // </React.StrictMode>
 );

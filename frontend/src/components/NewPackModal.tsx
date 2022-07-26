@@ -1,19 +1,24 @@
 import {
+  Alert,
   AlertDialog,
   AlertDialogBody,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogOverlay,
+  AlertIcon,
   Box,
   Button,
   Flex,
+  Icon,
+  Link,
+  Text,
   Tooltip,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { BiCog, BiPackage } from "react-icons/bi";
+import { BiCog, BiMessage, BiPackage, BiQuestionMark } from "react-icons/bi";
 import { FiCloudLightning, FiFile, FiFolder, FiPackage } from "react-icons/fi";
 import { CreatePack, OpenDirectory, SaveFile } from "../../wailsjs/go/main/App";
 import { basename, dirname } from "../utils";
@@ -34,17 +39,15 @@ export const NewPackModal = () => {
 
   return (
     <>
-      <Tooltip label="Create a story pack from a structured directory">
-        <Button
-          variant="ghost"
-          colorScheme="linkedin"
-          leftIcon={<FiPackage />}
-          ml={2}
-          onClick={onOpen}
-        >
-          Create pack
-        </Button>
-      </Tooltip>
+      <Button
+        variant="ghost"
+        colorScheme="linkedin"
+        leftIcon={<FiPackage />}
+        ml={2}
+        onClick={onOpen}
+      >
+        Create pack
+      </Button>
 
       <AlertDialog
         isOpen={isOpen}
@@ -61,6 +64,18 @@ export const NewPackModal = () => {
               <Box>
                 To create a new pack, first select a structured directory from
                 your system
+                <Alert variant="left-accent" colorScheme="gray" my={2}>
+                  <AlertIcon />
+                  <Text>
+                    Not sure what is a structured directory ? Check the{" "}
+                    <Link
+                      textDecor="underline"
+                      href="https://github.com/olup/lunii-admin#creating-your-own-story-packs"
+                    >
+                      project readme
+                    </Link>
+                  </Text>
+                </Alert>
                 <Flex mt={2}>
                   <Button
                     leftIcon={<FiFolder />}
@@ -112,7 +127,6 @@ export const NewPackModal = () => {
                           title: "Your story pack was created",
                           description: "You can now install it on your device",
                           status: "success",
-                          duration: 9000,
                           isClosable: true,
                         });
                         handleClose();
@@ -122,7 +136,6 @@ export const NewPackModal = () => {
                           title: "Something went wrong creating the pack",
                           description: err,
                           status: "error",
-                          duration: 9000,
                           isClosable: true,
                         });
                         handleClose();

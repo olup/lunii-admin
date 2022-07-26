@@ -41,7 +41,6 @@ export const DetailsModal: FC<{
     toast({
       title: "The pack was deleted from the device",
       status: "success",
-      duration: 9000,
       isClosable: true,
     });
     onClose();

@@ -100,13 +100,7 @@ func (a *App) OpenFile(title string) string {
 	return path
 }
 
-func (a *App) InstallPack() (string, error) {
-	packPath, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-		Title: "Choose Zip Pack",
-	})
-	if err != nil || packPath == "" {
-		return "", err
-	}
+func (a *App) InstallPack(packPath string) (string, error) {
 
 	device, err := lunii.GetDevice()
 	studioPack, err := lunii.ReadStudioPack(packPath)
@@ -123,6 +117,8 @@ func (a *App) InstallPack() (string, error) {
 }
 
 func (a *App) ChangePackOrder(uuid uuid.UUID, index int) (string, error) {
+
+	fmt.Println("Moving ", uuid, index)
 
 	device, err := lunii.GetDevice()
 	if err != nil {
