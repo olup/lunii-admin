@@ -44,6 +44,7 @@ export const DetailsModal: FC = () => {
       status: "success",
       isClosable: true,
     });
+    await queryClient.invalidateQueries(["device"]);
     await queryClient.invalidateQueries(["packs"]);
     setLocation("/");
   };
