@@ -22,17 +22,18 @@ import { DeleteModal } from "./DeleteModal";
 import { PackTag } from "./PackTag";
 import parse from "html-react-parser";
 import { ListPacks, RemovePack } from "../../wailsjs/go/main/App";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocation, useRoute } from "wouter";
 
-export const DetailsModal: FC<{
-  uuid: number[];
-}> = ({ uuid }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { data: packs, refetch: refetchPacks } = useQuery(["packs"], ListPacks);
-  const pack = packs?.find((p) => p.uuid === uuid);
+export const DetailsModal: FC = () => {
+  const [, setLocation] = useLocation();
+  const [, params] = useRoute("/pack/:uuid");
   const toast = useToast();
+  const { data: packs } = useQuery(["packs"], ListPacks);
 
+  const pack = packs?.find((p) => (p.uuid as any) === params?.uuid);
   if (!pack) return null;
+  const queryClient = useQueryClient();
 
   const parsedDescription = parse(pack.description);
 
@@ -43,20 +44,13 @@ export const DetailsModal: FC<{
       status: "success",
       isClosable: true,
     });
-    onClose();
-    await refetchPacks();
+    await queryClient.invalidateQueries(["packs"]);
+    setLocation("/");
   };
 
   return (
     <>
-      <IconButton
-        variant="ghost"
-        aria-label="Details"
-        icon={<FiMoreVertical />}
-        onClick={onOpen}
-      />
-
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={true} onClose={() => setLocation("/")}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader></ModalHeader>

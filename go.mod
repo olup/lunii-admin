@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/google/uuid v1.3.0
-	github.com/olup/lunii-cli v0.0.0-20220726200600-95d1c00bfe0d
+	github.com/olup/lunii-cli v0.0.0-20220727052208-9ff36a20c348
 	github.com/rhysd/go-github-selfupdate v1.2.3
 	github.com/wailsapp/wails/v2 v2.0.0-beta.42
 )
@@ -55,6 +55,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/qiniu/audio v0.2.1 // indirect
 	github.com/qiniu/x v1.11.9 // indirect
+	github.com/ricochet2200/go-disk-usage/du v0.0.0-20210707232629-ac9918953285 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/tcnksm/go-gitconfig v0.1.2 // indirect

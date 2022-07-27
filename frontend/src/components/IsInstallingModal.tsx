@@ -21,7 +21,7 @@ export const IsInstallingModal: FC<{ isOpen: boolean }> = ({ isOpen }) => {
           <ModalHeader>Installing Pack</ModalHeader>
           <ModalBody>
             <Text mb={2}>Wait a few moments, it's almost ready.</Text>
-            <Progress isIndeterminate />
+            <Progress size="sm" isIndeterminate />
           </ModalBody>
 
           <ModalFooter></ModalFooter>

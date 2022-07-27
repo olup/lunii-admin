@@ -1,66 +1,46 @@
 import {
   Alert,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
   AlertIcon,
   Box,
   Button,
   Flex,
-  Icon,
   Link,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
-  Tooltip,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { BiCog, BiMessage, BiPackage, BiQuestionMark } from "react-icons/bi";
-import { FiCloudLightning, FiFile, FiFolder, FiPackage } from "react-icons/fi";
+import { useState } from "react";
+import { FiFile, FiFolder, FiPackage } from "react-icons/fi";
+import { useLocation } from "wouter";
 import { CreatePack, OpenDirectory, SaveFile } from "../../wailsjs/go/main/App";
 import { basename, dirname } from "../utils";
 
 export const NewPackModal = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = React.useRef() as any;
   const toast = useToast();
 
   const [directoryPath, setDirectoryPath] = useState("");
   const [destinationPath, setDestinationPath] = useState("");
+  const [_, setLocation] = useLocation();
 
   const handleClose = () => {
-    setDirectoryPath("");
-    setDestinationPath("");
-    onClose();
+    setLocation("/");
   };
 
   return (
     <>
-      <Button
-        variant="ghost"
-        colorScheme="linkedin"
-        leftIcon={<FiPackage />}
-        ml={2}
-        onClick={onOpen}
-      >
-        Create pack
-      </Button>
-
-      <AlertDialog
-        isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={handleClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+      <Modal isOpen={true} onClose={handleClose}>
+        <ModalOverlay>
+          <ModalContent>
+            <ModalHeader fontSize="lg" fontWeight="bold">
               Creating a new pack
-            </AlertDialogHeader>
+            </ModalHeader>
 
-            <AlertDialogBody>
+            <ModalBody>
               <Box>
                 To create a new pack, first select a structured directory from
                 your system
@@ -108,17 +88,14 @@ export const NewPackModal = () => {
                   </Flex>
                 </Box>
               )}
-            </AlertDialogBody>
+            </ModalBody>
 
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={handleClose}>
-                Cancel
-              </Button>
+            <ModalFooter>
+              <Button onClick={handleClose}>Cancel</Button>
               {directoryPath && destinationPath && (
                 <Button
                   rightIcon={<FiPackage />}
                   colorScheme="green"
-                  ref={cancelRef}
                   ml={2}
                   onClick={() =>
                     CreatePack(directoryPath, destinationPath)
@@ -145,10 +122,10 @@ export const NewPackModal = () => {
                   Create
                 </Button>
               )}
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+            </ModalFooter>
+          </ModalContent>
+        </ModalOverlay>
+      </Modal>
     </>
   );
 };

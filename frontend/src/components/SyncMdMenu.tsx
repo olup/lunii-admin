@@ -6,7 +6,7 @@ import {
   MenuItem,
   useToast,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FiCloud, FiDownload, FiHardDrive } from "react-icons/fi";
 import {
   ListPacks,
@@ -17,7 +17,8 @@ import {
 } from "../../wailsjs/go/main/App";
 
 export const SyncMdMenu = () => {
-  const { data: packs, refetch } = useQuery(["packs"], ListPacks);
+  const { data: packs } = useQuery(["packs"], ListPacks);
+  const queryClient = useQueryClient();
   const toast = useToast();
 
   const handleSyncLuniiStoreMetadata = async () => {
@@ -36,7 +37,7 @@ export const SyncMdMenu = () => {
       });
     }
 
-    await refetch();
+    await queryClient.invalidateQueries(["packs"]);
   };
 
   const handleSyncStudioMetadata = async (customPath = false) => {
@@ -60,7 +61,7 @@ export const SyncMdMenu = () => {
         description: err as string,
       });
     }
-    await refetch();
+    await queryClient.invalidateQueries(["packs"]);
   };
 
   return (
