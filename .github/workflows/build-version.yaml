@@ -40,13 +40,13 @@ jobs:
         run: |
           Set-Item -Path Env:CGO_LDFLAGS -Value "-LD:/a/lunii-admin/lunii-admin/bindings/windows/lib"
           Set-Item -Path Env:CGO_CFLAGS -Value "-ID:/a/lunii-admin/lunii-admin/bindings/windows/include"
-          wails build -o lunii-admin-windows.exe -ldflags "-v '-extldflags=-static -lm'"
+          wails build -o lunii-admin_windows_amd64.exe -ldflags "-v '-extldflags=-static -lm'"
 
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "build/bin/lunii-admin-windows.exe"
+          artifacts: "build/bin/lunii-admin_windows_amd64.exe"
           token: ${{ secrets.GITHUB_TOKEN }}
 
   build-linux:
@@ -84,13 +84,13 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
-        run: wails build -o lunii-admin-linux
+        run: wails build -o lunii-admin_linux_amd64
 
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "build/bin/lunii-admin-linux"
+          artifacts: "build/bin/lunii-admin_linux_amd64"
           token: ${{ secrets.GITHUB_TOKEN }}
 
   build-macos-amd:
@@ -129,14 +129,12 @@ jobs:
       - name: Build
         run: wails build
 
-      - name: Create DMG
-        run: |
-          brew install create-dmg
-          create-dmg lunii-admin-macos.dmg build/bin/lunii-admin.app
+      - name: Create Zip
+        run: ditto -c -k --sequesterRsrc --keepParent build/bin/lunii-admin.app lunii-admin_darwin_amd64.zip
 
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "lunii-admin-macos.dmg"
+          artifacts: "lunii-admin_darwin_amd64.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
