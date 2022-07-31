@@ -54,10 +54,8 @@ func (a *App) startup(ctx context.Context) {
 	}
 
 	sentry.ConfigureScope(func(scope *sentry.Scope) {
-		scope.SetContext("infos", map[string]interface{}{
-			"version":   version,
-			"machineId": machineId,
-		})
+		scope.SetTag("version", version)
+		scope.SetTag("machineId", machineId)
 	})
 
 	sentry.CaptureMessage("initial-event")
