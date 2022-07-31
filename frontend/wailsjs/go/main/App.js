@@ -18,6 +18,10 @@ export function GetDeviceInfos() {
   return window['go']['main']['App']['GetDeviceInfos']();
 }
 
+export function GetInfos() {
+  return window['go']['main']['App']['GetInfos']();
+}
+
 export function InstallPack(arg1) {
   return window['go']['main']['App']['InstallPack'](arg1);
 }

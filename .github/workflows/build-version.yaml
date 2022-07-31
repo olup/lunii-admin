@@ -40,7 +40,7 @@ jobs:
         run: |
           Set-Item -Path Env:CGO_LDFLAGS -Value "-LD:/a/lunii-admin/lunii-admin/bindings/windows/lib"
           Set-Item -Path Env:CGO_CFLAGS -Value "-ID:/a/lunii-admin/lunii-admin/bindings/windows/include"
-          wails build -o lunii-admin_windows_amd64.exe -ldflags "-v '-extldflags=-static -lm'"
+          go generate && wails build -o lunii-admin_windows_amd64.exe -ldflags "-v '-extldflags=-static -lm'"
 
       - uses: ncipollo/release-action@v1
         with:
@@ -84,7 +84,7 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
-        run: wails build -o lunii-admin_linux_amd64
+        run: go generate && wails build -o lunii-admin_linux_amd64
 
       - uses: ncipollo/release-action@v1
         with:
@@ -127,7 +127,7 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
-        run: wails build
+        run: go generate && wails build
 
       - name: Create Zip
         run: ditto -c -k --sequesterRsrc --keepParent build/bin/lunii-admin.app lunii-admin_darwin_amd64.zip
