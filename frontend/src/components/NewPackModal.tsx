@@ -18,6 +18,7 @@ import { useState } from "react";
 import { FiFile, FiFolder, FiPackage } from "react-icons/fi";
 import { useLocation } from "wouter";
 import { CreatePack, OpenDirectory, SaveFile } from "../../wailsjs/go/main/App";
+import { BrowserOpenURL } from "../../wailsjs/runtime";
 import { basename, dirname } from "../utils";
 
 export const NewPackModal = () => {
@@ -50,7 +51,11 @@ export const NewPackModal = () => {
                     Not sure what is a structured directory ? Check the{" "}
                     <Link
                       textDecor="underline"
-                      href="https://github.com/olup/lunii-admin#creating-your-own-story-packs"
+                      onClick={() =>
+                        BrowserOpenURL(
+                          "https://github.com/olup/lunii-admin#creating-your-own-story-packs"
+                        )
+                      }
                     >
                       project readme
                     </Link>

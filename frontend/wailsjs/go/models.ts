@@ -65,8 +65,7 @@ export namespace lunii {
 	    firmwareVersionMinor: number;
 	    sdCardSize: number;
 	    sdCardUsed: number;
-	    // Go type: DiskUsage
-	    diskUsage?: any;
+	    diskUsage?: DiskUsage;
 	
 	    static createFrom(source: any = {}) {
 	        return new Device(source);
@@ -83,7 +82,7 @@ export namespace lunii {
 	        this.firmwareVersionMinor = source["firmwareVersionMinor"];
 	        this.sdCardSize = source["sdCardSize"];
 	        this.sdCardUsed = source["sdCardUsed"];
-	        this.diskUsage = this.convertValues(source["diskUsage"], null);
+	        this.diskUsage = this.convertValues(source["diskUsage"], DiskUsage);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -104,6 +103,7 @@ export namespace lunii {
 		    return a;
 		}
 	}
+	
 	export class Metadata {
 	    uuid: number[];
 	    ref: string;

@@ -1,7 +1,7 @@
 import { Flex, IconButton, Box } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { FiMoreVertical } from "react-icons/fi";
 import { MdDragIndicator } from "react-icons/md";
 import { Link } from "wouter";

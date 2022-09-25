@@ -55,19 +55,24 @@ export const AboutModal: FC = () => {
                       {device.firmwareVersionMinor}
                     </Code>
                   </Box>
-                  <Box mb={3}>
-                    Space{" "}
-                    <Code>
-                      {formatBytes(device.diskUsage.used)} /{" "}
-                      {formatBytes(device.diskUsage.free)}
-                    </Code>
-                  </Box>
-                  <Progress
-                    size="sm"
-                    value={
-                      (100 / device.diskUsage.free) * device.diskUsage.used
-                    }
-                  />
+                  {device.diskUsage && (
+                    <>
+                      <Box mb={3}>
+                        Space{" "}
+                        <Code>
+                          {formatBytes(device.diskUsage.used)} /{" "}
+                          {formatBytes(device.diskUsage.free)}
+                        </Code>
+                      </Box>
+
+                      <Progress
+                        size="sm"
+                        value={
+                          (100 / device.diskUsage.free) * device.diskUsage.used
+                        }
+                      />
+                    </>
+                  )}
                 </Box>
               </>
             )}
