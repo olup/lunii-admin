@@ -3,29 +3,28 @@ package main
 import (
 	"context"
 	_ "embed"
-	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	goruntime "runtime"
 	"strings"
+	"time"
 
 	"github.com/blang/semver"
 	"github.com/denisbrodbeck/machineid"
 	"github.com/google/uuid"
+	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
 
 	"github.com/olup/lunii-cli/pkg/lunii"
 	studiopackbuilder "github.com/olup/lunii-cli/pkg/pack-builder"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
-	"github.com/getsentry/sentry-go"
+	log "github.com/sirupsen/logrus"
 )
 
-//go:generate bash scripts/get-version.sh
-//go:embed version.txt
 var version string
 var machineId, _ = machineid.ID()
+var nrApp *newrelic.Application
 
 // App struct
 type App struct {
@@ -36,70 +35,82 @@ func NewApp() *App {
 	return &App{}
 }
 
+var NR_LICENCE = ""
+
 func (a *App) startup(ctx context.Context) {
+	var err error
+	log.SetFormatter(&log.JSONFormatter{})
+	defer HandlePanic()
+
+	nrApp, err = newrelic.NewApplication(
+		newrelic.ConfigAppName("lunii-admin"),
+		newrelic.ConfigLicense(NR_LICENCE),
+		newrelic.ConfigAppLogForwardingEnabled(true),
+		newrelic.ConfigAppLogEnabled(true),
+	)
+
+	if err != nil {
+		log.Error(err)
+		log.Error("NR init: %s", err)
+	}
+	logHook := NewHook(nrApp, DefaultLevels)
+	log.AddHook(logHook)
+
+	log.Info("NR app loaded")
+
 	a.ctx = ctx
 
-	// Sentry config
-	err := sentry.Init(sentry.ClientOptions{
-		Dsn: "https://1c80a20fce80413db1008a4d4dc4a06d@o1341821.ingest.sentry.io/6615295",
-		// Set TracesSampleRate to 1.0 to capture 100%
-		// of transactions for performance monitoring.
-		// We recommend adjusting this value in production,
-		TracesSampleRate: 1.0,
-		AttachStacktrace: true,
-		Environment:      "production",
-	})
-	if err != nil {
-		log.Fatalf("sentry.Init: %s", err)
-	}
-
-	sentry.ConfigureScope(func(scope *sentry.Scope) {
-		scope.SetTag("version", version)
-		scope.SetTag("machineId", machineId)
-	})
-
-	sentry.CaptureMessage("initial-event")
+	log.Info("App started")
 }
 
 func (a *App) GetDeviceInfos() *lunii.Device {
-	defer sentry.Recover()
+	defer HandlePanic()
+	log.Info("Get device info")
 
 	device, err := lunii.GetDevice()
 	if err != nil {
+		log.Error(err)
 		return nil
 	}
 	return device
 }
 
 func (a *App) ListPacks() []lunii.Metadata {
-	defer sentry.Recover()
+	defer HandlePanic()
+	log.Info("List pack")
 
 	device, err := lunii.GetDevice()
 	if err != nil {
+		log.Error(err)
 		return nil
 	}
 	metadatas, err := device.GetPacks()
 	if err != nil {
+		log.Error(err)
 		return nil
 	}
 	return metadatas
 }
 
 func (a *App) RemovePack(uuid uuid.UUID) (bool, error) {
-	defer sentry.Recover()
+	defer HandlePanic()
+	log.Info("Remove pack")
 
 	device, err := lunii.GetDevice()
 	if err != nil {
+		log.Error(err)
 		return false, err
 	}
 
 	err = device.RemovePackFromIndex(uuid)
 	if err != nil {
+		log.Error(err)
 		return false, err
 	}
 
 	err = os.RemoveAll(filepath.Join(device.MountPoint, ".content", lunii.GetRefFromUUid(uuid)))
 	if err != nil {
+		log.Error(err)
 		return false, err
 	}
 
@@ -107,17 +118,20 @@ func (a *App) RemovePack(uuid uuid.UUID) (bool, error) {
 }
 
 func (a *App) CreatePack(directoryPath string, destinationPath string) (string, error) {
-	defer sentry.Recover()
+	defer HandlePanic()
+	log.Info("Create pack")
 
 	_, err := studiopackbuilder.CreateStudioPack(directoryPath, destinationPath)
 	if err != nil {
+		log.Error(err)
 		return "", err
 	}
 	return "", nil
 }
 
 func (a *App) OpenDirectory(title string) string {
-	defer sentry.Recover()
+	defer HandlePanic()
+	log.Info("Open directory")
 
 	path, _ := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: title,
@@ -126,9 +140,10 @@ func (a *App) OpenDirectory(title string) string {
 }
 
 func (a *App) SaveFile(title string, defaultDirectory string, defaultFileName string) string {
-	defer sentry.Recover()
+	defer HandlePanic()
+	log.Info("Save file")
 
-	fmt.Println("Select save path - options : ", defaultDirectory, defaultFileName)
+	log.Info("Select save path - options : ", defaultDirectory, defaultFileName)
 	path, _ := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		Title:            title,
 		DefaultDirectory: defaultDirectory,
@@ -138,7 +153,8 @@ func (a *App) SaveFile(title string, defaultDirectory string, defaultFileName st
 }
 
 func (a *App) OpenFile(title string) string {
-	defer sentry.Recover()
+	defer HandlePanic()
+	log.Info("Open file")
 
 	path, _ := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: title,
@@ -147,16 +163,19 @@ func (a *App) OpenFile(title string) string {
 }
 
 func (a *App) InstallPack(packPath string) (string, error) {
-	defer sentry.Recover()
+	defer HandlePanic()
+	log.Info("Install pack")
 
 	device, err := lunii.GetDevice()
 	studioPack, err := lunii.ReadStudioPack(packPath)
 	if err != nil {
+		log.Error(err)
 		return "", err
 	}
 
 	err = device.AddStudioPack(studioPack)
 	if err != nil {
+		log.Error(err)
 		return "", err
 	}
 
@@ -164,19 +183,22 @@ func (a *App) InstallPack(packPath string) (string, error) {
 }
 
 func (a *App) ChangePackOrder(uuid uuid.UUID, index int) (string, error) {
-	defer sentry.Recover()
+	defer HandlePanic()
+	log.Info("Change pack order")
 
-	fmt.Println("Moving ", uuid, index)
+	log.Info("Moving ", uuid, index)
 
 	device, err := lunii.GetDevice()
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
+		log.Error(err)
 		return "", err
 	}
 
 	err = device.ChangePackOrder(uuid, index)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
+		log.Error(err)
 		return "", err
 	}
 
@@ -184,15 +206,18 @@ func (a *App) ChangePackOrder(uuid uuid.UUID, index int) (string, error) {
 }
 
 func (a *App) SyncLuniiStoreMetadata(uuids []uuid.UUID) (string, error) {
-	defer sentry.Recover()
+	defer HandlePanic()
+	log.Info("Sync store metadata")
 
 	device, err := lunii.GetDevice()
 	if err != nil {
+		log.Error(err)
 		return "", err
 	}
 
 	db, err := lunii.GetLuniiMetadataDb()
 	if err != nil {
+		log.Error(err)
 		return "", err
 	}
 
@@ -204,15 +229,18 @@ func (a *App) SyncLuniiStoreMetadata(uuids []uuid.UUID) (string, error) {
 }
 
 func (a *App) SyncStudioMetadata(uuids []uuid.UUID, dbPath string) (string, error) {
-	defer sentry.Recover()
+	defer HandlePanic()
+	log.Info("Sync studio metadata")
 
 	device, err := lunii.GetDevice()
 	if err != nil {
+		log.Error(err)
 		return "", err
 	}
 
 	db, err := lunii.GetStudioMetadataDb(dbPath)
 	if err != nil {
+		log.Error(err)
 		return "", err
 	}
 
@@ -229,8 +257,16 @@ type CheckUpdateResponse struct {
 	ReleaseNotes  string `json:"releaseNotes"`
 }
 
+var lastCheck time.Time
+var lastResponse *CheckUpdateResponse
+
 func (a *App) CheckForUpdate() (*CheckUpdateResponse, error) {
-	defer sentry.Recover()
+	defer HandlePanic()
+	if lastCheck.Add(time.Hour*1).Before(time.Now()) && lastResponse != nil {
+		return lastResponse, nil
+	}
+
+	log.Info("Check updates")
 
 	latest, found, err := selfupdate.DetectLatest("olup/lunii-admin")
 
@@ -248,12 +284,13 @@ func (a *App) CheckForUpdate() (*CheckUpdateResponse, error) {
 	v := semver.MustParse(trimmedVersion)
 
 	if err != nil {
-		log.Println("Error occurred while detecting version:", err)
+		log.Error(err)
+		log.Error("Error occurred while detecting version:", err)
 		return nil, err
 	}
 
 	if !found || latest.Version.LTE(v) {
-		log.Println("Current version is the latest")
+		log.Info("Current version is the latest")
 		return &CheckUpdateResponse{
 			CanUpdate:     false,
 			LatestVersion: "",
@@ -261,11 +298,14 @@ func (a *App) CheckForUpdate() (*CheckUpdateResponse, error) {
 		}, nil
 	}
 
-	return &CheckUpdateResponse{
+	lastCheck = time.Now()
+	lastResponse = &CheckUpdateResponse{
 		CanUpdate:     true,
 		LatestVersion: latest.Version.String(),
 		ReleaseNotes:  latest.ReleaseNotes,
-	}, nil
+	}
+
+	return lastResponse, nil
 }
 
 type Infos struct {
@@ -276,7 +316,10 @@ type Infos struct {
 }
 
 func (a *App) GetInfos() (*Infos, error) {
-	defer sentry.Recover()
+	defer HandlePanic()
+	trx := nrApp.StartTransaction("lunii_get_infos")
+	defer trx.End()
+	log.Info("Get infos")
 
 	return &Infos{
 		Version:   version,

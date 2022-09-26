@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  NR_LICENCE: ${{ secrets.NR_LICENCE }}
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -13,6 +16,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - run: Get-Location
       - run: ls D:/a/lunii-admin/lunii-admin/bindings/windows/lib
 
       - uses: actions/setup-node@v3
@@ -23,24 +28,17 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: ">=1.18.0"
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~\AppData\Local\go-build
-            ~\go\pkg\mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          cache: true
 
       - name: Set up Wails
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
+        env:
+          CGO_LDFLAGS: "-LD:/a/lunii-admin/lunii-admin/bindings/windows/lib"
+          CGO_CFLAGS: "-ID:/a/lunii-admin/lunii-admin/bindings/windows/include"
         run: |
-          Set-Item -Path Env:CGO_LDFLAGS -Value "-LD:/a/lunii-admin/lunii-admin/bindings/windows/lib"
-          Set-Item -Path Env:CGO_CFLAGS -Value "-ID:/a/lunii-admin/lunii-admin/bindings/windows/include"
-          go generate && wails build -debug -o lunii-admin_windows_amd64.exe -ldflags "-v '-extldflags=-static -lm'"
+          go generate && wails build -debug  -skipbindings -o lunii-admin_windows_amd64.exe -ldflags "-v '-extldflags=-static -lm'"
 
       - uses: ncipollo/release-action@v1
         with:
@@ -72,21 +70,13 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: ">=1.18.0"
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~\AppData\Local\go-build
-            ~\go\pkg\mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          cache: true
 
       - name: Set up Wails
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
-        run: go generate && wails build -debug -o lunii-admin_linux_amd64
+        run: wails build -ldflags "-X main.NR_LICENCE=$NR_LICENCE -X main.version=$(git describe --tags --abbrev=0)" -debug  -skipbindings -o lunii-admin_linux_amd64
 
       - uses: ncipollo/release-action@v1
         with:
@@ -117,21 +107,13 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: ">=1.18.0"
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~\AppData\Local\go-build
-            ~\go\pkg\mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          cache: true
 
       - name: Set up Wails
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
-        run: go generate && wails build -debug
+        run: wails build -ldflags "-X main.NR_LICENCE=$NR_LICENCE -X main.version=$(git describe --tags --abbrev=0)" -debug -skipbindings
 
       - name: Create Zip
         run: ditto -c -k --sequesterRsrc --keepParent build/bin/lunii-admin.app lunii-admin_darwin_amd64.zip
