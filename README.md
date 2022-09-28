@@ -3,7 +3,7 @@
   <img width="300" alt="image" src="https://user-images.githubusercontent.com/13785588/179449532-a4beb00f-0315-4386-9468-e494fc347224.png">
 </p>
 
-download latest version from https://github.com/olup/lunii-admin/releases/tag/next
+[Download latest version](https://github.com/olup/lunii-admin/releases)
 
 This is a small desktop app to manage your lunii device.
 
@@ -57,3 +57,7 @@ uuid: <A single uuid - generate it from https://www.uuidtools.com/v4>
 The use the "create pack" button from the app to convert such a directory to a `.zip` STUdio story pack.
 
 You can then install the resulting pack to your device with the "install pack" button.
+
+---
+
+Build in GO and React, desktop app powered by [Wails](https://github.com/wailsapp/)
