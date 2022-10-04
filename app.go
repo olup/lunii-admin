@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	_ "embed"
+	"errors"
 	"os"
 	"path/filepath"
 	goruntime "runtime"
@@ -162,21 +163,48 @@ func (a *App) OpenFile(title string) string {
 	return path
 }
 
+// global var, so that we can't start two installing jobs at the same time
+var isInstalling = false
+
 func (a *App) InstallPack(packPath string) (string, error) {
+	if isInstalling == true {
+		log.Error("Installation already in process")
+	}
+
 	defer HandlePanic()
 	log.Info("Install pack")
 
 	device, err := lunii.GetDevice()
 	studioPack, err := lunii.ReadStudioPack(packPath)
+
 	if err != nil {
 		log.Error(err)
 		return "", err
 	}
 
-	err = device.AddStudioPack(studioPack)
-	if err != nil {
-		log.Error(err)
-		return "", err
+	channel := make(chan string, 100)
+
+	isInstalling = true
+	go func() {
+		err := device.AddStudioPack(studioPack, &channel)
+		isInstalling = false
+
+		if err != nil {
+			log.Error(err)
+			channel <- "ERROR"
+			return
+		}
+	}()
+
+	for message := range channel {
+		log.Info("Update: " + message)
+		runtime.EventsEmit(a.ctx, "INSTALL_EVENT", message)
+		if message == "DONE" {
+			break
+		}
+		if message == "ERROR" {
+			return "", errors.New("An error happened while installing on device")
+		}
 	}
 
 	return "", nil

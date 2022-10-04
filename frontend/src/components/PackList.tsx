@@ -2,7 +2,7 @@ import { Flex, IconButton, Box } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { FiMoreVertical } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import { MdDragIndicator } from "react-icons/md";
 import { Link } from "wouter";
 import { ListPacks } from "../../wailsjs/go/main/App";
@@ -81,7 +81,7 @@ export const PackList = () => {
                           <IconButton
                             variant="ghost"
                             aria-label="Details"
-                            icon={<FiMoreVertical />}
+                            icon={<FiSearch />}
                           />
                         </Link>
                       </Box>
