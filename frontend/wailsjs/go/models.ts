@@ -1,21 +1,5 @@
 export namespace main {
 	
-	export class CheckUpdateResponse {
-	    canUpdate: boolean;
-	    latestVersion: string;
-	    releaseNotes: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new CheckUpdateResponse(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.canUpdate = source["canUpdate"];
-	        this.latestVersion = source["latestVersion"];
-	        this.releaseNotes = source["releaseNotes"];
-	    }
-	}
 	export class Infos {
 	    version: string;
 	    machineId: string;
@@ -32,6 +16,22 @@ export namespace main {
 	        this.machineId = source["machineId"];
 	        this.os = source["os"];
 	        this.arch = source["arch"];
+	    }
+	}
+	export class CheckUpdateResponse {
+	    canUpdate: boolean;
+	    latestVersion: string;
+	    releaseNotes: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new CheckUpdateResponse(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.canUpdate = source["canUpdate"];
+	        this.latestVersion = source["latestVersion"];
+	        this.releaseNotes = source["releaseNotes"];
 	    }
 	}
 
