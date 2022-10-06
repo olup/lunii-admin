@@ -7,7 +7,7 @@ require (
 	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/google/uuid v1.3.0
 	github.com/newrelic/go-agent/v3 v3.19.2
-	github.com/olup/lunii-cli v0.0.0-20221006192221-9cb951d6ed94
+	github.com/olup/lunii-cli v0.0.0-20221006203529-daf82bc03d5f
 	github.com/rhysd/go-github-selfupdate v1.2.3
 	github.com/sirupsen/logrus v1.9.0
 	github.com/wailsapp/wails/v2 v2.0.0
