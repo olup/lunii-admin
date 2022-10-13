@@ -58,7 +58,7 @@ export const AboutModal: FC = () => {
                   {device.diskUsage && (
                     <>
                       <Box mb={3}>
-                        Space{" "}
+                        Space (Used/Restore){" "}
                         <Code>
                           {formatBytes(device.diskUsage.used)} /{" "}
                           {formatBytes(device.diskUsage.free)}
@@ -97,7 +97,10 @@ export const AboutModal: FC = () => {
                   </Badge>
                   <Box mb={2}>A new version is available</Box>
                   <Box mb={2} fontStyle="italic" opacity={0.5}>
-                    Very soon you'll be able to trigger the update from here
+                    Very soon you'll be able to trigger the update from here.
+                  </Box>
+                  <Box mb={2} fontStyle="italic" opacity={0.5}>
+                    Until this time, you can download the latest version from the <u><a href="https://github.com/olup/lunii-admin/releases/latest">github repo</a></u>.
                   </Box>
                 </Box>
               </>

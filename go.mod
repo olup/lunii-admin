@@ -30,6 +30,8 @@ require (
 	github.com/imroc/req/v3 v3.13.1 // indirect
 	github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf // indirect
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
+	github.com/jfreymuth/oggvorbis v1.0.4 // indirect
+	github.com/jfreymuth/vorbis v1.0.2 // indirect
 	github.com/klauspost/compress v1.15.5 // indirect
 	github.com/klauspost/pgzip v1.2.5 // indirect
 	github.com/labstack/echo/v4 v4.7.2 // indirect

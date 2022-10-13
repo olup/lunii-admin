@@ -34,7 +34,7 @@ export const UpdateModal: FC = () => {
               A new version of this tool is available.
               <Box>
                 Very soon this will let you self-update. Until this time, you
-                can download the latest version from the github repo.
+                can download the latest version from the <a href="https://github.com/olup/lunii-admin/releases/latest">github repo</a>.
               </Box>
             </Box>
             <Box mb={2}>
