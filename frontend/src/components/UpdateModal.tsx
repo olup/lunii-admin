@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Code,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,10 +15,11 @@ import {
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { FC } from "react";
-import { Link, useLocation, useRoute } from "wouter";
+import { useLocation, useRoute } from "wouter";
 import { CheckForUpdate, GetDeviceInfos } from "../../wailsjs/go/main/App";
 import { useDeviceQuery, useUpdateQuery } from "../hooks/useApi";
 import { formatBytes } from "../utils";
+import { BrowserOpenURL } from "../../wailsjs/runtime";
 
 export const UpdateModal: FC = () => {
   const [location, setLocation] = useLocation();
@@ -34,7 +36,17 @@ export const UpdateModal: FC = () => {
               A new version of this tool is available.
               <Box>
                 Very soon this will let you self-update. Until this time, you
-                can download the latest version from the <a href="https://github.com/olup/lunii-admin/releases/latest">github repo</a>.
+                can download the latest version from the {" "}
+                <Link
+                  textDecor="underline"
+                  onClick={() =>
+                    BrowserOpenURL(
+                      "https://github.com/olup/lunii-admin/releases/latest"
+                    )
+                  }
+                >
+                  github repo
+                </Link>
               </Box>
             </Box>
             <Box mb={2}>

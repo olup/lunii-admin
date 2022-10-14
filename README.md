@@ -59,10 +59,13 @@ The use the "create pack" button from the app to convert such a directory to a `
 You can then install the resulting pack to your device with the "install pack" button.
 
 ---
-## Build
-Build in GO and React, desktop app powered by [Wails](https://github.com/wailsapp/)
+## Build from sources
 
 Commands to build can be seen in the [GitHub Pipeline configuration file](.github/workflows/build-version.yaml)
 
 Some dependencies should be installed first (eg: libmp3lame-dev).
+
+## Technologies
+
+Build with GO and React, desktop app powered by [Wails](https://github.com/wailsapp/)
 

@@ -64,7 +64,7 @@ export const DetailsModal: FC = () => {
               {pack.title}
             </Text>
             <Box mb={2}>{parsedDescription}</Box>
-            <Box mb={2}>Pack number
+            <Box mb={2}>Pack id
               <Tag mb={2}>{pack.uuid}</Tag>
             </Box>
           </ModalBody>
