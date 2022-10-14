@@ -23,7 +23,7 @@ export const PackList = () => {
       <Flex py={3}>
         <Box width={50}></Box>
         <Box flex={1}>Title</Box>
-        <Box width={100}></Box>
+        <Box width={150}>Type</Box>
         <Box width={50}></Box>
       </Flex>
       <DragDropContext

@@ -4,6 +4,7 @@ import {
   Button,
   Code,
   Divider,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -18,6 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FC, version } from "react";
 import { useLocation, useRoute } from "wouter";
 import { GetDeviceInfos } from "../../wailsjs/go/main/App";
+import { BrowserOpenURL } from "../../wailsjs/runtime";
 import {
   useDeviceQuery,
   useGetInfosQuery,
@@ -58,7 +60,7 @@ export const AboutModal: FC = () => {
                   {device.diskUsage && (
                     <>
                       <Box mb={3}>
-                        Space{" "}
+                        Space (Used/Restore){" "}
                         <Code>
                           {formatBytes(device.diskUsage.used)} /{" "}
                           {formatBytes(device.diskUsage.free)}
@@ -97,7 +99,20 @@ export const AboutModal: FC = () => {
                   </Badge>
                   <Box mb={2}>A new version is available</Box>
                   <Box mb={2} fontStyle="italic" opacity={0.5}>
-                    Very soon you'll be able to trigger the update from here
+                    Very soon you'll be able to trigger the update from here.
+                  </Box>
+                  <Box mb={2} fontStyle="italic" opacity={0.5}>
+                    Until this time, you can download the latest version from the {" "}
+                    <Link
+                      textDecor="underline"
+                      onClick={() =>
+                        BrowserOpenURL(
+                          "https://github.com/olup/lunii-admin/releases/latest"
+                        )
+                      }
+                    >
+                      github repo
+                    </Link>
                   </Box>
                 </Box>
               </>
