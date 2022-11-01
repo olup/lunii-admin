@@ -109,12 +109,8 @@ github.com/newrelic/go-agent/v3 v3.19.2 h1:gu5Vyp/61gMzXptr+va7+pliKaRkNShoSadYG
 github.com/newrelic/go-agent/v3 v3.19.2/go.mod h1:rT6ZUxJc5rQbWLyCtjqQCOcfb01lKRFbc1yMQkcboWM=
 github.com/nwaples/rardecode/v2 v2.0.0-beta.2 h1:e3mzJFJs4k83GXBEiTaQ5HgSc/kOK8q0rDaRO0MPaOk=
 github.com/nwaples/rardecode/v2 v2.0.0-beta.2/go.mod h1:yntwv/HfMc/Hbvtq9I19D1n58te3h6KsqCf3GxyfBGY=
-github.com/olup/lunii-cli v0.0.0-20221004194038-51bb0ff8f7fa h1:7k6SpsYfUAFZKekaq4bxx75JxgEHwgIklrdxElvbgQc=
-github.com/olup/lunii-cli v0.0.0-20221004194038-51bb0ff8f7fa/go.mod h1:oSGXGkGLrEr8iSTZzIakQ4pHyKhEbltFUhKh0s60csA=
-github.com/olup/lunii-cli v0.0.0-20221014053406-9d76fd4d9f36 h1:GGQkeDs0XWKd2dQWR7qhJr8gJ1naQMFgvuP2KrQy6Uc=
-github.com/olup/lunii-cli v0.0.0-20221014053406-9d76fd4d9f36/go.mod h1:VSEI0CungPSFA4xj5yoLcp+j+/9/3zHmAvabKEr3zC8=
-github.com/olup/lunii-cli v0.0.0-20221014191009-7943b8d3e5bb h1:qdr4r36+KSv+u2ssF66Rl58XHi2OoUEwUsom4WHRAHc=
-github.com/olup/lunii-cli v0.0.0-20221014191009-7943b8d3e5bb/go.mod h1:VSEI0CungPSFA4xj5yoLcp+j+/9/3zHmAvabKEr3zC8=
+github.com/olup/lunii-cli v0.0.0-20221101211144-e968778c96d8 h1:O847zUQkXaIgnoqEPVIf+aA+dk2dVhQgQIrjevfjbr4=
+github.com/olup/lunii-cli v0.0.0-20221101211144-e968778c96d8/go.mod h1:VSEI0CungPSFA4xj5yoLcp+j+/9/3zHmAvabKEr3zC8=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/gomega v1.4.2 h1:3mYCb7aPxS/RU7TI1y4rkEn1oKmPRjNJLNEXgw7MH2I=
 github.com/onsi/gomega v1.4.2/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
