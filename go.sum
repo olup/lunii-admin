@@ -111,6 +111,8 @@ github.com/nwaples/rardecode/v2 v2.0.0-beta.2 h1:e3mzJFJs4k83GXBEiTaQ5HgSc/kOK8q
 github.com/nwaples/rardecode/v2 v2.0.0-beta.2/go.mod h1:yntwv/HfMc/Hbvtq9I19D1n58te3h6KsqCf3GxyfBGY=
 github.com/olup/lunii-cli v0.0.0-20221101211144-e968778c96d8 h1:O847zUQkXaIgnoqEPVIf+aA+dk2dVhQgQIrjevfjbr4=
 github.com/olup/lunii-cli v0.0.0-20221101211144-e968778c96d8/go.mod h1:VSEI0CungPSFA4xj5yoLcp+j+/9/3zHmAvabKEr3zC8=
+github.com/olup/lunii-cli v0.0.0-20221102213136-72732c0436ae h1:Rh4YT4XYmOnjyuVOUH75nfC3JhpkAGKdcqxDZbQpgdk=
+github.com/olup/lunii-cli v0.0.0-20221102213136-72732c0436ae/go.mod h1:VSEI0CungPSFA4xj5yoLcp+j+/9/3zHmAvabKEr3zC8=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/gomega v1.4.2 h1:3mYCb7aPxS/RU7TI1y4rkEn1oKmPRjNJLNEXgw7MH2I=
 github.com/onsi/gomega v1.4.2/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
