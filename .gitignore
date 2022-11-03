@@ -26,6 +26,6 @@ dist/
 
 node_modules
 .DS_Store
-build/bin
-build/darwin
+build
+!build/appicon.png
 version.txt
