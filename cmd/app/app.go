@@ -16,8 +16,8 @@ import (
 	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
 
-	"github.com/olup/lunii-cli/pkg/lunii"
-	studiopackbuilder "github.com/olup/lunii-cli/pkg/pack-builder"
+	"github.com/olup/lunii-admin/pkg/lunii"
+	studiopackbuilder "github.com/olup/lunii-admin/pkg/pack-builder"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
 	log "github.com/sirupsen/logrus"

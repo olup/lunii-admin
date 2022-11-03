@@ -31,9 +31,10 @@ jobs:
           cache: true
 
       - name: Set up Wails
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@master
 
       - name: Build
+        working-directory: ./cmd/app
         env:
           CGO_LDFLAGS: "-LD:/a/lunii-admin/lunii-admin/bindings/windows/lib"
           CGO_CFLAGS: "-ID:/a/lunii-admin/lunii-admin/bindings/windows/include"
@@ -73,9 +74,10 @@ jobs:
           cache: true
 
       - name: Set up Wails
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@master
 
       - name: Build
+        working-directory: ./cmd/app
         run: wails build -ldflags "-X main.NR_LICENCE=$NR_LICENCE -X main.version=$(git describe --tags --abbrev=0)" -debug  -skipbindings -o lunii-admin_linux_amd64
 
       - uses: ncipollo/release-action@v1
@@ -110,9 +112,10 @@ jobs:
           cache: true
 
       - name: Set up Wails
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@master
 
       - name: Build
+        working-directory: ./cmd/app
         run: wails build -ldflags "-X main.NR_LICENCE=$NR_LICENCE -X main.version=$(git describe --tags --abbrev=0)" -debug -skipbindings
 
       - name: Create Zip
