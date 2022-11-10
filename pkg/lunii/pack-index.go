@@ -57,7 +57,16 @@ func (device *Device) WriteGlobalIndexFile(stories []uuid.UUID) error {
 	for _, storyUuid := range stories {
 		buf = append(buf, storyUuid[:]...)
 	}
-	err := os.WriteFile(filepath.Join(device.MountPoint, ".pi"), buf, 0777)
+
+	//Using OpenFile + Write instead WriteFile which cause issues on Windows
+	piFile, err := os.OpenFile(filepath.Join(device.MountPoint, ".pi"), os.O_WRONLY|os.O_TRUNC, 0777)
+	if err != nil {
+		return err
+	}
+	defer piFile.Close()
+
+	_, err = piFile.Write(buf)
+
 	return err
 }
 
