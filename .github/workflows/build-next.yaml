@@ -39,7 +39,7 @@ jobs:
           CGO_LDFLAGS: "-LD:/a/lunii-admin/lunii-admin/bindings/windows/lib"
           CGO_CFLAGS: "-ID:/a/lunii-admin/lunii-admin/bindings/windows/include"
         run: |
-          go generate && wails build -debug  -skipbindings -o lunii-admin_windows_amd64.exe -ldflags "-v '-extldflags=-static -lm'"
+          go generate && wails build -debug  -skipbindings -o lunii-admin_windows_amd64.exe -ldflags "-v '-extldflags=-static -lm' -X main.NR_LICENCE=$NR_LICENCE -X main.version=$(git describe --tags --abbrev=0)"
 
       - uses: ncipollo/release-action@v1
         with:
