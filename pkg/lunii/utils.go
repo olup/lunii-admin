@@ -75,12 +75,6 @@ func Mp3ToMp3(fileBytes []byte) ([]byte, error) {
 		return nil, errors.New("Could not decode mp3 file - maybe not an MP3 ?")
 	}
 
-	if data.Channels == 1 && data.SampleRate == 44100 {
-		fmt.Println(len(fileBytes))
-		fmt.Println("No conversion needed")
-		return fileBytes, nil
-	}
-
 	return encodeMp3(mp3Audio, data.Channels, data.SampleRate)
 
 }

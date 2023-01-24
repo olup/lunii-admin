@@ -19,7 +19,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/tosone/minimp3 v1.0.1
 	github.com/viert/go-lame v0.0.0-20201108052322-bb552596b11d
-	github.com/wailsapp/wails/v2 v2.1.1-0.20221103102140-18b2d315dda8
+	github.com/wailsapp/wails/v2 v2.1.0
 	golang.org/x/image v0.0.0-20220617043117-41969df76e82
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -41,6 +41,7 @@ require (
 	github.com/jfreymuth/vorbis v1.0.2 // indirect
 	github.com/klauspost/compress v1.15.5 // indirect
 	github.com/klauspost/pgzip v1.2.5 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/labstack/echo/v4 v4.9.0 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/leaanthony/go-ansi-parser v1.0.1 // indirect
@@ -48,12 +49,12 @@ require (
 	github.com/leaanthony/slicer v1.5.0 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/nwaples/rardecode/v2 v2.0.0-beta.2 // indirect
 	github.com/pierrec/lz4/v4 v4.1.14 // indirect
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/qiniu/x v1.11.5 // indirect
-	github.com/samber/lo v1.27.1 // indirect
 	github.com/tcnksm/go-gitconfig v0.1.2 // indirect
 	github.com/therootcompany/xz v1.0.1 // indirect
 	github.com/tkrajina/go-reflector v0.5.5 // indirect
@@ -62,7 +63,6 @@ require (
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	github.com/wailsapp/mimetype v1.4.1 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
 	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect
 	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
@@ -71,4 +71,5 @@ require (
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
 	google.golang.org/grpc v1.49.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
+	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 )
