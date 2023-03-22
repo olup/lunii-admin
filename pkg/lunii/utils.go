@@ -6,7 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"math"
+	"path"
 	"time"
 
 	"image"
@@ -39,6 +41,30 @@ func boolToShort(boolean bool) int16 {
 	} else {
 		return 0
 	}
+}
+
+func ImageReadOrDecode(fileName string, file fs.File) ([]byte, error) {
+	content, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println("error while reading the file")
+		return nil, err
+	}
+
+	if path.Ext(fileName) == ".bmp" {
+		fmt.Println("bmp detected: " + fileName)
+		match := checkByteAtPosition(content, 28, 4)
+		if match {
+			fmt.Println("bmp4 detected")
+			return content, nil
+		}
+	}
+
+	decoded, err := ImageToBmp4(bytes.NewReader(content))
+	if err != nil {
+		fmt.Println("Error while decoding the file")
+		return nil, err
+	}
+	return decoded, nil
 }
 
 func ImageToBmp4(file io.Reader) ([]byte, error) {
@@ -141,4 +167,13 @@ type DiskStatus struct {
 	Used  uint64 `json:"used"`
 	Free  uint64 `json:"free"`
 	Avail uint64 `json:"avail"`
+}
+
+func checkByteAtPosition(bytes []byte, position int, value int) bool {
+	// Check if the byte at the given position matches the given value
+	if int(bytes[position]) == value {
+		return true
+	} else {
+		return false
+	}
 }

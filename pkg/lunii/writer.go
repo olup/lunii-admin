@@ -77,6 +77,7 @@ func (device *Device) AddStudioPack(studioPack *StudioPack, updateChan *chan str
 	if err != nil {
 		return err
 	}
+	fmt.Println("Generating temp data: " + tempPath)
 
 	fmt.Println("Generating Binaries : Operation took : ", time.Since(start))
 	start = time.Now()
@@ -107,6 +108,8 @@ func (device *Device) AddStudioPack(studioPack *StudioPack, updateChan *chan str
 
 	// copy images in rf
 	fmt.Println("Converting images ...")
+	fmt.Println(len(*imageIndex))
+
 	sendUpdate(updateChan, "CONVERTING_IMAGES")
 
 	deviceImageDirectory := filepath.Join(tempPath, "rf", "000")
@@ -256,10 +259,12 @@ func convertAndWriteImage(reader zip.ReadCloser, deviceImageDirectory string, im
 	if err != nil {
 		return err
 	}
-	bmpFile, err := ImageToBmp4(file)
+
+	bmpFile, err := ImageReadOrDecode(image.SourceName, file)
 	if err != nil {
 		return err
 	}
+
 	cypheredBmp := cipherFirstBlockCommonKey(bmpFile)
 	err = os.WriteFile(filepath.Join(deviceImageDirectory, intTo8Chars(index)), cypheredBmp, 0777)
 	if err != nil {
