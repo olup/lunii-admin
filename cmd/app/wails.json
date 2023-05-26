@@ -7,7 +7,7 @@
   "frontend:install": "npm install",
   "frontend:build": "npm run build",
   "frontend:dev:watcher": "npm run dev",
-  "frontend:dev:serverUrl": "http://localhost:3000",
+  "frontend:dev:serverUrl": "http://localhost:5173",
   "author": {
     "name": "olup",
     "email": "loup.topalian@gmail.com"

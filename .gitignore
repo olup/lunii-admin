@@ -29,3 +29,5 @@ node_modules
 build
 !build/appicon.png
 version.txt
+
+.note

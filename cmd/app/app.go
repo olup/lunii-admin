@@ -163,6 +163,16 @@ func (a *App) OpenFile(title string) string {
 	return path
 }
 
+func (a *App) OpenFiles(title string) []string {
+	defer HandlePanic()
+	log.Info("Open file")
+
+	paths, _ := runtime.OpenMultipleFilesDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: title,
+	})
+	return paths
+}
+
 // global var, so that we can't start two installing jobs at the same time
 var isInstalling = false
 

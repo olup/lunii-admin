@@ -38,6 +38,10 @@ export function OpenFile(arg1) {
   return window['go']['main']['App']['OpenFile'](arg1);
 }
 
+export function OpenFiles(arg1) {
+  return window['go']['main']['App']['OpenFiles'](arg1);
+}
+
 export function RemovePack(arg1) {
   return window['go']['main']['App']['RemovePack'](arg1);
 }

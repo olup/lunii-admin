@@ -22,6 +22,8 @@ export function OpenDirectory(arg1:string):Promise<string>;
 
 export function OpenFile(arg1:string):Promise<string>;
 
+export function OpenFiles(arg1:string):Promise<Array<string>>;
+
 export function RemovePack(arg1:uuid.UUID):Promise<boolean>;
 
 export function SaveFile(arg1:string,arg2:string,arg3:string):Promise<string>;
