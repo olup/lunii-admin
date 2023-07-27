@@ -12,6 +12,7 @@ import (
 	"time"
 
 	cp "github.com/otiai10/copy"
+	"github.com/pbnjay/memory"
 	yaml "gopkg.in/yaml.v3"
 )
 
@@ -132,9 +133,31 @@ func (device *Device) AddStudioPack(studioPack *StudioPack, updateChan *chan str
 	deviceAudioDirectory := filepath.Join(tempPath, "sf", "000")
 	os.MkdirAll(deviceAudioDirectory, 0700)
 
+	// for each audioindex start a goroutine to convert and write the audio
+	// throttle the number of goroutines depending on the ram available
+
+	waitingTime := 500 * time.Millisecond // 500 milliseconds
+	scheduleMaxRetries := 20              // 10 seconds (20 * 500ms)
+	minMemory := uint64(500000000)        // 500MB
+
 	for i, audio := range *audioIndex {
+		// wait until there is enough memory to convert the audio
+		tryCount := 0
+		for memory.FreeMemory() < minMemory {
+			tryCount++
+			if tryCount > scheduleMaxRetries {
+				return errors.New("Timing out : Not enough memory to convert the audio files")
+			}
+			// wait 500 milliseconds before checking again
+			time.Sleep(waitingTime)
+		}
+
+		// add a coroutine to the wait-group
 		wg.Add(1)
 		go convertAndWriteAudio(*reader, deviceAudioDirectory, audio, i)
+
+		// wait 500 milliseconds so that coroutines can start
+		time.Sleep(waitingTime)
 	}
 
 	wg.Wait()
