@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	_ "embed"
-	"errors"
 	"os"
 	"path/filepath"
 	goruntime "runtime"
@@ -192,30 +191,15 @@ func (a *App) InstallPack(packPath string) (string, error) {
 		return "", err
 	}
 
-	channel := make(chan string, 100)
-
-	isInstalling = true
 	go func() {
-		err := device.AddStudioPack(studioPack, &channel)
-		isInstalling = false
-
+		isInstalling = true
+		err := device.AddStudioPack(studioPack)
 		if err != nil {
-			log.Error(err)
-			channel <- "ERROR"
-			return
+			lunii.CurrentJob.IsComplete = true
+			lunii.CurrentJob.Err = err.Error()
 		}
+		isInstalling = false
 	}()
-
-	for message := range channel {
-		log.Info("Update: " + message)
-		runtime.EventsEmit(a.ctx, "INSTALL_EVENT", message)
-		if message == "DONE" {
-			break
-		}
-		if message == "ERROR" {
-			return "", errors.New("An error happened while installing on device")
-		}
-	}
 
 	return "", nil
 }
@@ -241,6 +225,10 @@ func (a *App) ChangePackOrder(uuid uuid.UUID, index int) (string, error) {
 	}
 
 	return "", nil
+}
+
+func (a *App) GetCurrentJob() *lunii.Job {
+	return lunii.CurrentJob
 }
 
 func (a *App) SyncLuniiStoreMetadata(uuids []uuid.UUID) (string, error) {

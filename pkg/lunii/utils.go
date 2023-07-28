@@ -1,6 +1,7 @@
 package lunii
 
 import (
+	"archive/zip"
 	"bytes"
 	"encoding/binary"
 	"errors"
@@ -8,7 +9,9 @@ import (
 	"io"
 	"io/fs"
 	"math"
+	"os"
 	"path"
+	"path/filepath"
 	"time"
 
 	"image"
@@ -176,4 +179,45 @@ func checkByteAtPosition(bytes []byte, position int, value int) bool {
 	} else {
 		return false
 	}
+}
+
+// This function unzip the given zip file to the given directory
+func Unzip(zipFile string, targetDirectory string) error {
+	// Open the zip file
+	reader, err := zip.OpenReader(zipFile)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+
+	// Iterate through each file in the zip file
+	for _, file := range reader.File {
+		// Open the file inside the zip file
+		fileReader, err := file.Open()
+		if err != nil {
+			return err
+		}
+		defer fileReader.Close()
+
+		// Create the directories
+		err = os.MkdirAll(filepath.Join(targetDirectory, path.Dir(file.Name)), 0777)
+		if err != nil {
+			return err
+		}
+
+		// Create the file
+		targetFile, err := os.Create(filepath.Join(targetDirectory, file.Name))
+		if err != nil {
+			return err
+		}
+		defer targetFile.Close()
+
+		// Copy the file content
+		_, err = io.Copy(targetFile, fileReader)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

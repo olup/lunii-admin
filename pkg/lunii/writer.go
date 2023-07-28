@@ -1,10 +1,10 @@
 package lunii
 
 import (
-	"archive/zip"
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -12,11 +12,8 @@ import (
 	"time"
 
 	cp "github.com/otiai10/copy"
-	"github.com/pbnjay/memory"
 	yaml "gopkg.in/yaml.v3"
 )
-
-var wg sync.WaitGroup
 
 func sendUpdate(updateChan *chan string, msg string) {
 	// if no channel ?
@@ -33,17 +30,18 @@ func sendUpdate(updateChan *chan string, msg string) {
 	}
 }
 
-func (device *Device) AddStudioPack(studioPack *StudioPack, updateChan *chan string) error {
+func (device *Device) AddStudioPack(studioPack *StudioPack) error {
 	start := time.Now()
-	sendUpdate(updateChan, "STARTING")
-	defer sendUpdate(updateChan, "DONE")
+	CurrentJob = &Job{
+		IsComplete: false,
+		InitDone:   true,
+	}
 
 	// 1. Get path on devide
 	rootPath := device.MountPoint
 	contentPath := filepath.Join(rootPath, ".content", studioPack.Ref)
 
 	fmt.Println("Generating Binaries...")
-	sendUpdate(updateChan, "GENERATING_BINS")
 
 	stageNodeIndex := &studioPack.StageNodes
 	// generate list node index
@@ -80,11 +78,12 @@ func (device *Device) AddStudioPack(studioPack *StudioPack, updateChan *chan str
 	}
 	fmt.Println("Generating temp data: " + tempPath)
 
+	CurrentJob.BinGenerationDone = true
+
 	fmt.Println("Generating Binaries : Operation took : ", time.Since(start))
 	start = time.Now()
 
 	fmt.Println("Preparing asset in " + tempPath)
-	sendUpdate(updateChan, "PREPARING_ASSETS")
 
 	err = os.WriteFile(filepath.Join(tempPath, "ni"), niBinary, 0777)
 	err = os.WriteFile(filepath.Join(tempPath, "li"), liBinaryCiphered, 0777)
@@ -97,77 +96,78 @@ func (device *Device) AddStudioPack(studioPack *StudioPack, updateChan *chan str
 		return err
 	}
 
-	// prepare zip reader
-	reader, err := zip.OpenReader(studioPack.OriginalPath)
+	// unzip all files first
+	assetPath := filepath.Join(tempPath, "assets")
+	err = os.MkdirAll(assetPath, 0700)
 	if err != nil {
-		return errors.New("Zip package could not be opened")
+		return err
 	}
-	defer reader.Close()
 
-	fmt.Println("Preparing asset : Operation took : ", time.Since(start))
+	err = Unzip(studioPack.OriginalPath, assetPath)
+	if err != nil {
+		return err
+	}
+
+	CurrentJob.UnpackDone = true
+
+	reader := os.DirFS(assetPath)
+
+	fmt.Println("Unzipping asset : Operation took : ", time.Since(start))
 	start = time.Now()
 
 	// copy images in rf
 	fmt.Println("Converting images ...")
 	fmt.Println(len(*imageIndex))
 
-	sendUpdate(updateChan, "CONVERTING_IMAGES")
+	CurrentJob.TotalImages = len(*imageIndex)
 
 	deviceImageDirectory := filepath.Join(tempPath, "rf", "000")
 	os.MkdirAll(deviceImageDirectory, 0700)
 
+	wg := sync.WaitGroup{}
 	for i, image := range *imageIndex {
-		wg.Add(1)
-		go convertAndWriteImage(*reader, deviceImageDirectory, image, i)
+		go func() {
+			wg.Add(1)
+			convertAndWriteImage(reader, deviceImageDirectory, image, i)
+			CurrentJob.ImagesDone++
+			wg.Done()
+		}()
 	}
-
 	wg.Wait()
+
+	CurrentJob.ImagesConversionDone = true
 
 	fmt.Println("Converting images : Operation took : ", time.Since(start))
 	start = time.Now()
 
 	// copy audios in sf
 	fmt.Println("Converting audios ...")
-	sendUpdate(updateChan, "CONVERTING_AUDIOS")
 
 	deviceAudioDirectory := filepath.Join(tempPath, "sf", "000")
 	os.MkdirAll(deviceAudioDirectory, 0700)
 
-	// for each audioindex start a goroutine to convert and write the audio
-	// throttle the number of goroutines depending on the ram available
+	CurrentJob.TotalAudios = len(*audioIndex)
 
-	waitingTime := 500 * time.Millisecond // 500 milliseconds
-	scheduleMaxRetries := 20              // 10 seconds (20 * 500ms)
-	minMemory := uint64(500000000)        // 500MB
+	wg = sync.WaitGroup{}
 
 	for i, audio := range *audioIndex {
-		// wait until there is enough memory to convert the audio
-		tryCount := 0
-		for memory.FreeMemory() < minMemory {
-			tryCount++
-			if tryCount > scheduleMaxRetries {
-				return errors.New("Timing out : Not enough memory to convert the audio files")
-			}
-			// wait 500 milliseconds before checking again
-			time.Sleep(waitingTime)
-		}
-
-		// add a coroutine to the wait-group
-		wg.Add(1)
-		go convertAndWriteAudio(*reader, deviceAudioDirectory, audio, i)
-
-		// wait 500 milliseconds so that coroutines can start
-		time.Sleep(waitingTime)
+		go func() {
+			wg.Add(1)
+			convertAndWriteAudio(reader, deviceAudioDirectory, audio, i)
+			CurrentJob.AudiosDone++
+			wg.Done()
+		}()
 	}
 
 	wg.Wait()
+
+	CurrentJob.AudiosConversionDone = true
 
 	fmt.Println("Converting audios : Operation took : ", time.Since(start))
 	start = time.Now()
 
 	// adding metadata
 	fmt.Println("Writing metadata...")
-	sendUpdate(updateChan, "WRITING_METADATA")
 
 	md := Metadata{
 		Uuid:        studioPack.Uuid,
@@ -186,26 +186,31 @@ func (device *Device) AddStudioPack(studioPack *StudioPack, updateChan *chan str
 	if err != nil {
 		return err
 	}
+
+	CurrentJob.MetadataDone = true
+
 	fmt.Println("Writing metadata : Operation took : ", time.Since(start))
 	start = time.Now()
 
 	// copy temp to lunii
 	fmt.Println("Copying directory to the device...")
-	sendUpdate(updateChan, "COPYING")
 
 	cp.Copy(tempPath, contentPath)
+
+	CurrentJob.CopyingDone = true
 
 	fmt.Println("Copying directory to the device : Operation took : ", time.Since(start))
 	start = time.Now()
 
 	fmt.Println("Adding pack to root index...")
-	sendUpdate(updateChan, "UPDATING_INDEX")
 
 	// // update .pi root file with uuid
 	err = device.AddPackToIndex(studioPack.Uuid)
 	if err != nil {
 		return err
 	}
+
+	CurrentJob.IndexDone = true
 
 	fmt.Println("Adding pack to root index : Operation took : ", time.Since(start))
 	start = time.Now()
@@ -218,8 +223,7 @@ func (device *Device) AddStudioPack(studioPack *StudioPack, updateChan *chan str
 	return nil
 }
 
-func convertAndWriteAudio(reader zip.ReadCloser, deviceAudioDirectory string, audio Asset, index int) error {
-	defer wg.Done()
+func convertAndWriteAudio(reader fs.FS, deviceAudioDirectory string, audio Asset, index int) error {
 	var mp3 []byte
 	var err error
 
@@ -275,9 +279,7 @@ func convertAndWriteAudio(reader zip.ReadCloser, deviceAudioDirectory string, au
 	return nil
 }
 
-func convertAndWriteImage(reader zip.ReadCloser, deviceImageDirectory string, image Asset, index int) error {
-	defer wg.Done()
-
+func convertAndWriteImage(reader fs.FS, deviceImageDirectory string, image Asset, index int) error {
 	file, err := reader.Open("assets/" + image.SourceName)
 	if err != nil {
 		return err
