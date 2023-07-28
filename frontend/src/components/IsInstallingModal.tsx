@@ -16,7 +16,10 @@ import { GetCurrentJob } from "../../wailsjs/go/main/App";
 import { useQuery } from "@tanstack/react-query";
 
 export const IsInstallingModal: FC<{ isOpen: boolean }> = ({ isOpen }) => {
-  const { data } = useQuery(["currentJob"], () => GetCurrentJob(), {});
+  const { data } = useQuery(["currentJob"], () => GetCurrentJob(), {
+    refetchInterval: 500,
+  });
+
   if (!data) return null;
 
   return (
