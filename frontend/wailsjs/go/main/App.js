@@ -14,6 +14,10 @@ export function CreatePack(arg1, arg2) {
   return window['go']['main']['App']['CreatePack'](arg1, arg2);
 }
 
+export function GetCurrentJob() {
+  return window['go']['main']['App']['GetCurrentJob']();
+}
+
 export function GetDeviceInfos() {
   return window['go']['main']['App']['GetDeviceInfos']();
 }

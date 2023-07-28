@@ -10,6 +10,8 @@ export function CheckForUpdate():Promise<main.CheckUpdateResponse>;
 
 export function CreatePack(arg1:string,arg2:string):Promise<string>;
 
+export function GetCurrentJob():Promise<lunii.Job>;
+
 export function GetDeviceInfos():Promise<lunii.Device>;
 
 export function GetInfos():Promise<main.Infos>;

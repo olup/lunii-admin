@@ -1,22 +1,22 @@
 package lunii
 
 type Job struct {
-	IsComplete  bool
-	TotalImages int
-	TotalAudios int
-	ImagesDone  int
-	AudiosDone  int
+	IsComplete  bool `json:"isComplete"`
+	TotalImages int  `json:"totalImages"`
+	TotalAudios int  `json:"totalAudios"`
+	ImagesDone  int  `json:"imagesDone"`
+	AudiosDone  int  `json:"audiosDone"`
 
-	Err string
+	HasError string `json:"hasError"`
 
-	InitDone             bool
-	BinGenerationDone    bool
-	UnpackDone           bool
-	ImagesConversionDone bool
-	AudiosConversionDone bool
-	MetadataDone         bool
-	CopyingDone          bool
-	IndexDone            bool
+	InitDone             bool `json:"initDone"`
+	BinGenerationDone    bool `json:"binGenerationDone"`
+	UnpackDone           bool `json:"unpackDone"`
+	ImagesConversionDone bool `json:"imagesConversionDone"`
+	AudiosConversionDone bool `json:"audiosConversionDone"`
+	MetadataDone         bool `json:"metadataDone"`
+	CopyingDone          bool `json:"copyingDone"`
+	IndexDone            bool `json:"indexDone"`
 }
 
 var CurrentJob *Job

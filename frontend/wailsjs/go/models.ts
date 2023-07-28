@@ -65,6 +65,44 @@ export namespace lunii {
 		}
 	}
 	
+	export class Job {
+	    isComplete: boolean;
+	    totalImages: number;
+	    totalAudios: number;
+	    imagesDone: number;
+	    audiosDone: number;
+	    hasError: string;
+	    initDone: boolean;
+	    binGenerationDone: boolean;
+	    unpackDone: boolean;
+	    imagesConversionDone: boolean;
+	    audiosConversionDone: boolean;
+	    metadataDone: boolean;
+	    copyingDone: boolean;
+	    indexDone: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Job(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.isComplete = source["isComplete"];
+	        this.totalImages = source["totalImages"];
+	        this.totalAudios = source["totalAudios"];
+	        this.imagesDone = source["imagesDone"];
+	        this.audiosDone = source["audiosDone"];
+	        this.hasError = source["hasError"];
+	        this.initDone = source["initDone"];
+	        this.binGenerationDone = source["binGenerationDone"];
+	        this.unpackDone = source["unpackDone"];
+	        this.imagesConversionDone = source["imagesConversionDone"];
+	        this.audiosConversionDone = source["audiosConversionDone"];
+	        this.metadataDone = source["metadataDone"];
+	        this.copyingDone = source["copyingDone"];
+	        this.indexDone = source["indexDone"];
+	    }
+	}
 	export class Metadata {
 	    uuid: number[];
 	    ref: string;
