@@ -191,15 +191,13 @@ func (a *App) InstallPack(packPath string) (string, error) {
 		return "", err
 	}
 
-	go func() {
-		isInstalling = true
-		err := device.AddStudioPack(studioPack)
-		if err != nil {
-			lunii.CurrentJob.IsComplete = true
-			lunii.CurrentJob.HasError = err.Error()
-		}
-		isInstalling = false
-	}()
+	isInstalling = true
+	err = device.AddStudioPack(studioPack)
+	if err != nil {
+		lunii.CurrentJob.IsComplete = true
+		lunii.CurrentJob.HasError = err.Error()
+	}
+	isInstalling = false
 
 	return "", nil
 }
