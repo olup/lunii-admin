@@ -196,6 +196,7 @@ func (a *App) InstallPack(packPath string) (string, error) {
 	if err != nil {
 		lunii.CurrentJob.IsComplete = true
 		lunii.CurrentJob.HasError = err.Error()
+		log.Error(err)
 	}
 	isInstalling = false
 

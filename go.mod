@@ -17,7 +17,7 @@ require (
 	github.com/rhysd/go-github-selfupdate v1.2.3
 	github.com/ricochet2200/go-disk-usage/du v0.0.0-20210707232629-ac9918953285
 	github.com/sirupsen/logrus v1.9.0
-	github.com/tosone/minimp3 v1.0.1
+	github.com/tosone/minimp3 v1.0.2
 	github.com/viert/go-lame v0.0.0-20201108052322-bb552596b11d
 	github.com/wailsapp/wails/v2 v2.5.1
 	golang.org/x/image v0.5.0

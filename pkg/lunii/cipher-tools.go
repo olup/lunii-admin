@@ -2,6 +2,7 @@ package lunii
 
 import (
 	"encoding/binary"
+	"os"
 )
 
 var key = []byte{0x91, 0xbd, 0x7a, 0x0a, 0xa7, 0x54, 0x40, 0xa9, 0xbb, 0xd4, 0x9d, 0x6c, 0xe0, 0xdc, 0xc0, 0xe3}
@@ -30,6 +31,24 @@ func cipherFirstBlockCommonKey(data []byte) []byte {
 	// replace first block and return
 	copy(cipheredData, encryptedBlock)
 	return cipheredData
+}
+
+func cipherFileFirstBlockCommonKey(file *os.File) error {
+	data := make([]byte, 512)
+
+	_, err := file.Read(data)
+	if err != nil {
+		return err
+	}
+
+	block := cipherFirstBlockCommonKey(data)
+
+	_, err = file.WriteAt(block, 0)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // needed for boot file generation

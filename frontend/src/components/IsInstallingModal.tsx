@@ -31,7 +31,14 @@ export const IsInstallingModal: FC<{ isOpen: boolean }> = ({ isOpen }) => {
           <ModalBody>
             <Text>Unpacking</Text>
             {data.unpackDone && <Text>Converting images</Text>}
-            {data.imagesConversionDone && <Text>Converting audios</Text>}
+            {data.imagesConversionDone && (
+              <div>
+                <Text>Converting audios</Text>
+                <Text size="s">
+                  File {data.audiosDone}/{data.totalAudios}
+                </Text>
+              </div>
+            )}
             {data.audiosConversionDone && <Text>Copying</Text>}
             {data.copyingDone && <Text>Finalizing</Text>}
             <ModalFooter></ModalFooter>

@@ -41,6 +41,7 @@ func skip(reader *bufio.Reader, count int64) {
 }
 
 func DetectDeviceMountPoint() (string, error) {
+
 	var mountPoints []string
 	if runtime.GOOS == "windows" {
 		mountPoints = []string{"A:\\", "B:\\", "C:\\", "D:\\", "E:\\", "F:\\", "G:\\", "H:\\", "I:\\", "J:\\", "K:\\", "L:\\", "M:\\"}

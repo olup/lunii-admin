@@ -12,7 +12,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"time"
 
 	"image"
 	_ "image/jpeg"
@@ -83,52 +82,50 @@ func ImageToBmp4(file io.Reader) ([]byte, error) {
 	return bmp4.GetBitmap(grayscale), nil
 }
 
-func Mp3ToMp3(fileBytes []byte) ([]byte, error) {
-	start := time.Now()
+func Mp3ToMp3(reader io.Reader, writer io.Writer) error {
 
-	// maybe mp3 ?
-	data, mp3Audio, err := minimp3.DecodeFull(fileBytes)
-
-	fmt.Println("Audio opened in ", time.Since(start))
-
+	decoder, err := minimp3.NewDecoder(reader)
 	if err != nil {
-		// if ogg or wav
-		// source, _, err := audio.Decode(bytes.NewReader(fileBytes))
-		// if err != nil {
-		// 	return nil, err
-		// }
-		// audioBytes, err = ioutil.ReadAll(source)
-		// if err != nil {
-		// 	return nil, err
-		// }
-		return nil, errors.New("Could not decode mp3 file - maybe not an MP3 ?")
+		return nil
 	}
+	defer decoder.Close()
 
-	return encodeMp3(mp3Audio, data.Channels, data.SampleRate)
+	encoder := lame.NewEncoder(writer)
+	defer encoder.Close()
 
-}
-
-func encodeMp3(audioBytes []byte, dataChannel int, dataSampleRate int) ([]byte, error) {
-	output := new(bytes.Buffer)
-	enc := lame.NewEncoder(output)
-	defer enc.Close()
-
-	if dataChannel == 1 {
-		enc.SetNumChannels(1)
-	}
-
-	err := enc.SetVBR(lame.VBROff) //To be in CBR Mode
+	encoder.SetNumChannels(decoder.Channels)
+	err = encoder.SetVBR(lame.VBROff) //To be in CBR Mode
 	if err != nil {
-		return nil, err
+		return err
 	}
-	enc.SetInSamplerate(dataSampleRate)
-	enc.SetQuality(4)
-	enc.SetMode(lame.MpegMono)
-	enc.SetWriteID3TagAutomatic(false)
-	enc.Write(audioBytes)
-	enc.Flush()
+	encoder.SetInSamplerate(decoder.SampleRate)
+	encoder.SetQuality(4)
+	encoder.SetMode(lame.MpegMono)
+	encoder.SetWriteID3TagAutomatic(false)
 
-	return output.Bytes(), nil
+	fmt.Println("Decoding")
+	buffer := make([]byte, 1024)
+
+	for {
+		n, err := decoder.Read(buffer)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return err
+		}
+
+		_, err = encoder.Write(buffer[:n])
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
+	fmt.Println("Flushing")
+	encoder.Flush()
+
+	return nil
+
 }
 
 func float32toint16(num float32) int16 {
@@ -152,13 +149,47 @@ func GetByteSlice(r io.Reader) ([]byte, *oggvorbis.Format, error) {
 	return convertSliceToInt16Slice(oggAudio), format, nil
 }
 
-func OggToMp3(file io.Reader) ([]byte, error) {
-	audioBytes, format, err := GetByteSlice(file)
+func OggToMp3(file io.Reader, writer io.Writer) error {
+	decoder, err := oggvorbis.NewReader(file)
 	if err != nil {
-		return nil, errors.New("Could not decode ogg file?")
+		return errors.New("Could not decode ogg file?")
 	}
 
-	return encodeMp3(audioBytes, format.Channels, format.SampleRate)
+	encoder := lame.NewEncoder(writer)
+	defer encoder.Close()
+
+	encoder.SetNumChannels(decoder.Channels())
+	err = encoder.SetVBR(lame.VBROff) //To be in CBR Mode
+
+	if err != nil {
+		return nil
+	}
+	encoder.SetInSamplerate(decoder.SampleRate())
+	encoder.SetQuality(4)
+	encoder.SetMode(lame.MpegMono)
+	encoder.SetWriteID3TagAutomatic(false)
+
+	buffer := make([]float32, 1024)
+
+	for {
+		n, err := decoder.Read(buffer)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return err
+		}
+
+		_, err = encoder.Write(convertSliceToInt16Slice(buffer[:n]))
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
+	encoder.Flush()
+
+	return nil
+
 }
 
 func insert(array []uuid.UUID, element uuid.UUID, i int) []uuid.UUID {
@@ -192,30 +223,34 @@ func Unzip(zipFile string, targetDirectory string) error {
 
 	// Iterate through each file in the zip file
 	for _, file := range reader.File {
+		// skip directories
+		if file.FileInfo().IsDir() {
+			continue
+		}
 		// Open the file inside the zip file
 		fileReader, err := file.Open()
 		if err != nil {
-			return err
+			fmt.Errorf("error opening file %s: %v", file.Name, err)
 		}
 		defer fileReader.Close()
 
 		// Create the directories
 		err = os.MkdirAll(filepath.Join(targetDirectory, path.Dir(file.Name)), 0777)
 		if err != nil {
-			return err
+			return fmt.Errorf("error creating directories %s: %v", file.Name, err)
 		}
 
 		// Create the file
 		targetFile, err := os.Create(filepath.Join(targetDirectory, file.Name))
 		if err != nil {
-			return err
+			return fmt.Errorf("error creating file %s: %v", file.Name, err)
 		}
 		defer targetFile.Close()
 
 		// Copy the file content
 		_, err = io.Copy(targetFile, fileReader)
 		if err != nil {
-			return err
+			return fmt.Errorf("error copying file %s: %v", file.Name, err)
 		}
 	}
 

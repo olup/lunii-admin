@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
@@ -97,22 +96,25 @@ func (device *Device) AddStudioPack(studioPack *StudioPack) error {
 	}
 
 	// unzip all files first
-	assetPath := filepath.Join(tempPath, "assets")
-	err = os.MkdirAll(assetPath, 0700)
+	unpkgPath := filepath.Join(os.TempDir(), "packsUnpkg", studioPack.Ref)
+	err = os.MkdirAll(unpkgPath, 0700)
 	if err != nil {
 		return err
 	}
+	fmt.Println("Unzipping asset in " + unpkgPath)
+	defer os.RemoveAll(unpkgPath)
 
-	err = Unzip(studioPack.OriginalPath, assetPath)
+	err = Unzip(studioPack.OriginalPath, unpkgPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("Unzip error: %v", err)
 	}
 
 	CurrentJob.UnpackDone = true
 
-	reader := os.DirFS(assetPath)
-
 	fmt.Println("Unzipping asset : Operation took : ", time.Since(start))
+
+	reader := os.DirFS(unpkgPath)
+
 	start = time.Now()
 
 	// copy images in rf
@@ -124,16 +126,20 @@ func (device *Device) AddStudioPack(studioPack *StudioPack) error {
 	deviceImageDirectory := filepath.Join(tempPath, "rf", "000")
 	os.MkdirAll(deviceImageDirectory, 0700)
 
-	wg := sync.WaitGroup{}
-	for i, image := range *imageIndex {
+	var imgwg sync.WaitGroup
+
+	for i, _image := range *imageIndex {
+		index := i
+		image := _image
+
 		go func() {
-			wg.Add(1)
-			convertAndWriteImage(reader, deviceImageDirectory, image, i)
+			imgwg.Add(1)
+			convertAndWriteImage(reader, deviceImageDirectory, image, index)
 			CurrentJob.ImagesDone++
-			wg.Done()
+			imgwg.Done()
 		}()
 	}
-	wg.Wait()
+	imgwg.Wait()
 
 	CurrentJob.ImagesConversionDone = true
 
@@ -148,18 +154,24 @@ func (device *Device) AddStudioPack(studioPack *StudioPack) error {
 
 	CurrentJob.TotalAudios = len(*audioIndex)
 
-	wg = sync.WaitGroup{}
+	var sdwg sync.WaitGroup
 
-	for i, audio := range *audioIndex {
+	for i, _audio := range *audioIndex {
+		fmt.Println("Converting audio : ", _audio.SourceName)
+		index := i
+		audio := _audio
 		go func() {
-			wg.Add(1)
-			convertAndWriteAudio(reader, deviceAudioDirectory, audio, i)
+			sdwg.Add(1)
+			err := convertAndWriteAudio(reader, deviceAudioDirectory, audio, index)
+			if err != nil {
+				fmt.Println("Error converting audio : ", err)
+			}
 			CurrentJob.AudiosDone++
-			wg.Done()
+			sdwg.Done()
 		}()
 	}
 
-	wg.Wait()
+	sdwg.Wait()
 
 	CurrentJob.AudiosConversionDone = true
 
@@ -224,20 +236,25 @@ func (device *Device) AddStudioPack(studioPack *StudioPack) error {
 }
 
 func convertAndWriteAudio(reader fs.FS, deviceAudioDirectory string, audio Asset, index int) error {
-	var mp3 []byte
-	var err error
+	outPutFile, err := os.OpenFile(filepath.Join(deviceAudioDirectory, intTo8Chars(index)), os.O_CREATE|os.O_RDWR, 0777)
+	if err != nil {
+		return err
+	}
+	defer outPutFile.Close()
 
 	// if this is an empty file, we just write a blank mp3
 	if audio.SourceName == "EMPTY_SOUND" {
-		mp3, _ = hex.DecodeString(BLANK_MP3_FILE)
-
+		mp3, _ := hex.DecodeString(BLANK_MP3_FILE)
+		_, err = outPutFile.Write(mp3)
+		if err != nil {
+			return err
+		}
 	} else {
 		start := time.Now()
 
 		//check extension
 		extension := audio.SourceName[len(audio.SourceName)-3:]
 
-		// otherwise, let's convert the real file
 		file, err := reader.Open("assets/" + audio.SourceName)
 		if err != nil {
 			return err
@@ -246,18 +263,15 @@ func convertAndWriteAudio(reader fs.FS, deviceAudioDirectory string, audio Asset
 		defer file.Close()
 
 		if extension == "mp3" {
-			fileBytes, err := ioutil.ReadAll(file)
+			err := Mp3ToMp3(file, outPutFile)
 			if err != nil {
 				return err
 			}
-			mp3, err = Mp3ToMp3(fileBytes)
-			if err != nil {
-				return err
-			}
+
 		} else if extension == "ogg" {
 			// it's an ogg file
 
-			mp3, err = OggToMp3(file)
+			err = OggToMp3(file, outPutFile)
 			if err != nil {
 				return err
 			}
@@ -266,15 +280,10 @@ func convertAndWriteAudio(reader fs.FS, deviceAudioDirectory string, audio Asset
 			return errors.New("Audio file format not supported")
 		}
 		fmt.Println("Audio converted in ", time.Since(start))
-
 	}
 
-	cypheredFile := cipherFirstBlockCommonKey(mp3)
-
-	err = os.WriteFile(filepath.Join(deviceAudioDirectory, intTo8Chars(index)), cypheredFile, 0777)
-	if err != nil {
-		return err
-	}
+	// TODO cipher from a file on disk to save memory
+	//cipherFileFirstBlockCommonKey(outPutFile)
 
 	return nil
 }
