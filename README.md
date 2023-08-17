@@ -3,6 +3,16 @@
   <img width="300" alt="image" src="https://user-images.githubusercontent.com/13785588/179449532-a4beb00f-0315-4386-9468-e494fc347224.png">
 </p>
 
+Lunii Admin is evolving!
+
+The new, no installation required lunii-admin-web is even better. All the great features of lunii-admin but right where and when you need it, in your browser. An it has better pack installation feedback and even some tetris going on!
+
+Don't hesitate to check out the [hosted version](https://lunii-admin-web.pages.dev) or the [github repo](https://github.com/olup/lunii-admin-web)
+
+And to complete this new tool, you have a new pack creator: [lunii admin builder](https://lunii-admin-builder.pages.dev). It features a nice and simple UI to build your packs in a flash, and generate your missing images or audios on the fly.
+
+------
+
 [Download latest version](https://github.com/olup/lunii-admin/releases)
 
 This is a small desktop app to manage your lunii device.
